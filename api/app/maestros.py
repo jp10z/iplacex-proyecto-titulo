@@ -1,0 +1,7 @@
+class ESTADOS:
+    ACTIVO = 1
+    INACTIVO = 2
+
+class ROLES:
+    ADMINISTRADOR = 1
+    OPERADOR = 2
