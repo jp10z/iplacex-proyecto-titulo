@@ -16,6 +16,131 @@ CREATE TABLE rol (
     CONSTRAINT pk_rol PRIMARY KEY (id_rol)
 );
 
+-- tipo_evento
+
+CREATE TABLE tipo_evento (
+    id_tipo_evento NUMBER(10) NOT NULL,
+    nombre VARCHAR2(50) NOT NULL UNIQUE,
+    descripcion VARCHAR2(300),
+    CONSTRAINT pk_tipo_evento PRIMARY KEY (id_tipo_evento)
+);
+
+-- usuario
+
+CREATE TABLE usuario (
+    id_usuario NUMBER(10) NOT NULL,
+    correo VARCHAR2(200) NOT NULL UNIQUE,
+    nombre VARCHAR2(300) NOT NULL,
+    contrasenia VARCHAR2(255) NOT NULL,
+    id_rol NUMBER(10) NOT NULL,
+    id_estado NUMBER(10) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_usuario PRIMARY KEY (id_usuario),
+    CONSTRAINT fk_usuario_rol FOREIGN KEY (id_rol) REFERENCES rol (id_rol),
+    CONSTRAINT fk_usuario_estado FOREIGN KEY (id_estado) REFERENCES estado (id_estado)
+);
+
+CREATE SEQUENCE seq_usuario_id
+    START WITH 1
+    INCREMENT BY 1;
+
+-- proyecto
+
+CREATE TABLE proyecto (
+    id_proyecto NUMBER(10) NOT NULL,
+    nombre VARCHAR2(200) NOT NULL,
+    descripcion VARCHAR2(500),
+    id_estado NUMBER(10) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_proyecto PRIMARY KEY (id_proyecto),
+    CONSTRAINT fk_proyecto_estado FOREIGN KEY (id_estado) REFERENCES estado (id_estado)
+);
+
+CREATE SEQUENCE seq_proyecto_id
+    START WITH 1
+    INCREMENT BY 1;
+
+-- servidor
+
+CREATE TABLE servidor (
+    id_servidor NUMBER(10) NOT NULL,
+    nombre VARCHAR2(200) NOT NULL,
+    descripcion VARCHAR2(500) NOT NULL,
+    id_proyecto NUMBER(10) NOT NULL,
+    id_estado NUMBER(10) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_servidor PRIMARY KEY (id_servidor),
+    CONSTRAINT fk_servidor_proyecto FOREIGN KEY (id_proyecto) REFERENCES proyecto (id_proyecto),
+    CONSTRAINT fk_servidor_estado FOREIGN KEY (id_estado) REFERENCES estado (id_estado)
+);
+
+CREATE SEQUENCE seq_servidor_id
+    START WITH 1
+    INCREMENT BY 1;
+
+-- usuario_proyecto
+
+CREATE TABLE usuario_proyecto (
+    id_usuario_proyecto NUMBER(10) NOT NULL,
+    id_usuario NUMBER(10) NOT NULL,
+    id_proyecto NUMBER(10) NOT NULL,
+    id_estado NUMBER(10) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_usuario_proyecto PRIMARY KEY (id_usuario_proyecto),
+    CONSTRAINT fk_usuario_proyecto_usuario FOREIGN KEY (id_usuario) REFERENCES usuario (id_usuario),
+    CONSTRAINT fk_usuario_proyecto_proyecto FOREIGN KEY (id_proyecto) REFERENCES proyecto (id_proyecto),
+    CONSTRAINT fk_usuario_proyecto_estado FOREIGN KEY (id_estado) REFERENCES estado (id_estado)
+);
+
+CREATE SEQUENCE seq_usuario_proyecto_id
+    START WITH 1
+    INCREMENT BY 1;
+
+-- servidor_acceso
+
+CREATE TABLE servidor_acceso (
+    id_servidor_acceso NUMBER(10) NOT NULL,
+    id_servidor NUMBER(10) NOT NULL,
+    id_usuario NUMBER(10) NOT NULL,
+    fecha_acceso TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    duracion_minutos NUMBER(10) NOT NULL,
+    notas VARCHAR2(500),
+    id_estado NUMBER(10) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_servidor_acceso PRIMARY KEY (id_servidor_acceso),
+    CONSTRAINT fk_servidor_acceso_servidor FOREIGN KEY (id_servidor) REFERENCES servidor (id_servidor),
+    CONSTRAINT fk_servidor_acceso_usuario FOREIGN KEY (id_usuario) REFERENCES usuario (id_usuario),
+    CONSTRAINT fk_servidor_acceso_estado FOREIGN KEY (id_estado) REFERENCES estado (id_estado)
+);
+
+CREATE SEQUENCE seq_servidor_acceso_id
+    START WITH 1
+    INCREMENT BY 1;
+
+-- evento
+
+CREATE TABLE evento (
+    id_evento NUMBER(10) NOT NULL,
+    id_tipo_evento NUMBER(10) NOT NULL,
+    id_usuario NUMBER(10) NOT NULL,
+    id_servidor NUMBER(10),
+    detalle VARCHAR2(500) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_evento PRIMARY KEY (id_evento),
+    CONSTRAINT fk_evento_tipo_evento FOREIGN KEY (id_tipo_evento) REFERENCES tipo_evento (id_tipo_evento),
+    CONSTRAINT fk_evento_usuario FOREIGN KEY (id_usuario) REFERENCES usuario (id_usuario),
+    CONSTRAINT fk_evento_servidor FOREIGN KEY (id_servidor) REFERENCES servidor (id_servidor)
+);
+
+CREATE SEQUENCE seq_evento_id
+    START WITH 1
+    INCREMENT BY 1;
 
 -- commit
 COMMIT;
