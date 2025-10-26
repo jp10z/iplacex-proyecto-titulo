@@ -42,15 +42,15 @@ def obtener_usuarios():
 def agregar_usuario():
     logger.info("Agregar usuario")
     # obtener datos desde la request
-    datos = request.get_json()
+    datos: dict = request.get_json()
     if not datos or "correo" not in datos or "nombre" not in datos or "contrasenia" not in datos or "rol" not in datos:
         return {"status": "error", "mensaje": "Debe completar todos los campos"}, 422
-    correo: str = datos["correo"].strip()
-    nombre: str = datos["nombre"].strip()
-    contrasenia: str = datos["contrasenia"].strip()
+    correo: str = datos.get("correo", "").strip()
+    nombre: str = datos.get("nombre", "").strip()
+    contrasenia: str = datos.get("contrasenia", "").strip()
     # Se encripta la clave
     hash_contrasenia = contrasenias.generar_hash_contrasenia(contrasenia)
-    rol: str = datos["rol"].strip()
+    rol: str = datos.get("rol", "").strip()
     if rol == "ADMIN":
         id_rol = ROLES.ADMIN
     elif rol == "OPERADOR":
@@ -87,6 +87,68 @@ def agregar_usuario():
     bd_conexion.commit()
     cursor.close()
     return {"status": "success", "mensaje": "Usuario agregado correctamente"}, 201
+
+@api.route("/<int:id_usuario>", methods=["PUT"])
+def modificar_usuario(id_usuario: int):
+    logger.info(f"Modificando usuario {id_usuario}")
+    # obtener datos desde la request
+    datos: dict = request.get_json()
+    if not datos or "correo" not in datos or "nombre" not in datos or "rol" not in datos:
+        return {"status": "error", "mensaje": "Debe completar todos los campos"}, 422
+    correo: str = datos.get("correo", "").strip()
+    nombre: str = datos.get("nombre", "").strip()
+    contrasenia: str | None = datos.get("contrasenia", None)
+    rol: str = datos.get("rol", "").strip()
+    if rol == "ADMIN":
+        id_rol = ROLES.ADMIN
+    elif rol == "OPERADOR":
+        id_rol = ROLES.OPERADOR
+    else:
+        return {"status": "error", "mensaje": "Rol no válido"}, 422
+    # obtener conexión a la BD
+    bd_conexion: Connection = g.bd_conexion
+    # validar si el correo ya existe en otro usuario
+    cursor = bd_conexion.cursor()
+    query = "SELECT COUNT(*) FROM usuario WHERE correo = :correo AND id_usuario != :id_usuario"
+    query_vars = {
+        "correo": correo,
+        "id_usuario": id_usuario
+    }
+    cursor.execute(query, query_vars)
+    existe = cursor.fetchone()[0] > 0
+    cursor.close()
+    if existe:
+        return {"status": "error", "mensaje": "El correo ya está en uso"}, 422
+    # actualizar usuario en la BD
+    cursor = bd_conexion.cursor()
+    query = """
+        UPDATE usuario
+        SET correo = :correo, nombre = :nombre, id_rol = :id_rol
+        WHERE id_usuario = :id_usuario
+    """
+    query_vars = {
+        "correo": correo,
+        "nombre": nombre,
+        "id_rol": id_rol,
+        "id_usuario": id_usuario
+    }
+    cursor.execute(query, query_vars)
+    # actualizar la contraseña si se ingresó una nueva
+    if contrasenia:
+        hash_contrasenia = contrasenias.generar_hash_contrasenia(contrasenia)
+        query = """
+            UPDATE usuario
+            SET contrasenia = :contrasenia
+            WHERE id_usuario = :id_usuario
+        """
+        query_vars = {
+            "contrasenia": hash_contrasenia,
+            "id_usuario": id_usuario
+        }
+        cursor.execute(query, query_vars)
+    bd_conexion.commit()
+    cursor.close()
+    return {"status": "success", "mensaje": "Usuario modificado correctamente"}, 200
 
 @api.route("/<int:id_usuario>", methods=["DELETE"])
 def deshabilitar_usuario(id_usuario: int):

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { IUsuario } from "@/interfaces/usuarios";
 import { obtenerUsuarios } from "@/api/usuarios";
 import { AgregarUsuarioModal } from "./AgregarUsuario";
+import { ModificarUsuarioModal } from "./ModificarUsuario";
 import { DeshabilitarUsuarioModal } from "./DeshabilitarUsuario";
 
 export function UsuariosPage() {
@@ -9,6 +10,7 @@ export function UsuariosPage() {
     const [buscarValue, setBuscarValue] = useState("");
     const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
     const [modalAgregarUsuarioAbierto, setModalAgregarUsuarioAbierto] = useState(false);
+    const [modalModificarUsuarioAbierto, setModalModificarUsuarioAbierto] = useState(false);
     const [modalDeshabilitarUsuarioAbierto, setModalDeshabilitarUsuarioAbierto] = useState(false);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<IUsuario | undefined>(undefined);
 
@@ -70,7 +72,10 @@ export function UsuariosPage() {
                                     <td>{usuario.nombre}</td>
                                     <td>{obtenerRolTexto(usuario.rol)}</td>
                                     <td>
-                                        <button>Editar</button>
+                                        <button onClick={() => {
+                                            setUsuarioSeleccionado(usuario);
+                                            setModalModificarUsuarioAbierto(true);
+                                        }}>Modificar</button>
                                         <button onClick={() => {
                                             setUsuarioSeleccionado(usuario);
                                             setModalDeshabilitarUsuarioAbierto(true);
@@ -97,6 +102,16 @@ export function UsuariosPage() {
                 modalAbierto={modalDeshabilitarUsuarioAbierto}
                 cerrarModal={(recargar) => {
                     setModalDeshabilitarUsuarioAbierto(false);
+                    if (recargar) {
+                        cargarUsuarios();
+                    }
+                }}
+                usuario={usuarioSeleccionado}
+            />
+            <ModificarUsuarioModal
+                modalAbierto={modalModificarUsuarioAbierto}
+                cerrarModal={(recargar) => {
+                    setModalModificarUsuarioAbierto(false);
                     if (recargar) {
                         cargarUsuarios();
                     }
