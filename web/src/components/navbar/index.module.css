@@ -1,0 +1,31 @@
+.navbar {
+    background-color: #FFFFFF;
+    margin: 10px;
+    padding: 4px;
+    border: 1px solid #000000;
+}
+
+.mainLink {
+    display: inline;
+    margin: 4px;
+    position: relative;
+}
+
+.submenu {
+    background-color: #FFFFFF;
+    padding: 4px;
+    border: 1px solid #000000;
+    list-style-type: none;
+    position: absolute;
+    z-index: 10;
+    min-width: 150px;
+    display: none;
+    /* Para que el submenú se ponga justo debajo del link principal */
+    top: 100%;
+    left: 0;
+}
+
+.mainLink:hover > .submenu {
+    /* Mostrar el submenú cuando se pase el mouse por encima del link principal */
+    display: block;
+}

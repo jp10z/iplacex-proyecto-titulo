@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import classes from "./index.module.css";
 
 type Link = {
     texto: string;
@@ -22,13 +23,13 @@ export function Navbar({ links }: Props) {
     }
 
     return (
-        <nav>
+        <nav className={classes.navbar}>
             <ul>
                 {links?.map((link, index) => (
-                    <li key={index}>
+                    <li key={index} className={classes.mainLink}>
                         <a href={link.url} onClick={(e) => navegarA(e, link.url)}>{link.texto}</a>
                         {link.sublinks && link.sublinks.length > 0 && (
-                            <ul>
+                            <ul className={classes.submenu}>
                                 {link.sublinks.map((sublink, subindex) => (
                                     <li key={subindex}>
                                         <a href={sublink.url} onClick={(e) => navegarA(e, sublink.url)}>{sublink.texto}</a>
