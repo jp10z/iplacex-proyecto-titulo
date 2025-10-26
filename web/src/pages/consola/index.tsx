@@ -7,7 +7,6 @@ import { ServidoresPage } from "./servidores";
 export function ConsolaPage() {
     return (
         <>
-        <h1>Consola Page</h1>
         <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/usuarios" element={<UsuariosPage />} />

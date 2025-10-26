@@ -3,5 +3,9 @@ class ESTADOS:
     INACTIVO = 2
 
 class ROLES:
-    ADMINISTRADOR = 1
+    ADMIN = 1
     OPERADOR = 2
+
+class TIPOS_EVENTO:
+    LOGIN = 1
+    LOGIN_FALLIDO = 2
