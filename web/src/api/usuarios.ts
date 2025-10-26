@@ -6,3 +6,13 @@ const BASE_URL = "http://localhost:5000/api";
 export async function obtenerUsuarios() {
     return await axios.get<IUsuariosResponse>(`${BASE_URL}/usuarios`);
 }
+
+export async function agregarUsuario(correo: string, nombre: string, contrasenia: string, rol: string) {
+    const payload = {
+        correo: correo,
+        nombre: nombre,
+        contrasenia: contrasenia,
+        rol: rol
+    }
+    return await axios.post(`${BASE_URL}/usuarios`, payload);
+}

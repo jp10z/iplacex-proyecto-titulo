@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal } from "@/components/modal";
+import { agregarUsuario } from "@/api/usuarios";
 
 type Props = {
     modalAbierto: boolean;
@@ -12,16 +13,40 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
     const [contrasenia, setContrasenia] = useState("");
     const [rol, setRol] = useState("OPERADOR");
 
+    function doAgregarUsuario(e: React.FormEvent) {
+        e.preventDefault();
+        console.log("Agregar usuario");
+        agregarUsuario(correo, nombre, contrasenia, rol)
+            .then((response) => {
+                console.log("Usuario agregado:", response.data);
+                cerrarModal();
+            })
+            .catch((error) => {
+                console.error("Error al agregar el usuario:", error);
+            });
+    }
+
+    useEffect(() => {
+        // Resetear los datos del formulario cuando se cierre el modal
+        if (!modalAbierto) {
+            setCorreo("");
+            setNombre("");
+            setContrasenia("");
+            setRol("OPERADOR");
+        }
+    }, [modalAbierto]);
+
     return <Modal
         modalAbierto={modalAbierto}
         cerrarModal={cerrarModal}
         titulo="Agregar Usuario"
     >
-        <form>
+        <form onSubmit={doAgregarUsuario}>
             <div>
                 <label htmlFor="correo">Correo:</label>
                 <input
                     type="email"
+                    name="correo"
                     value={correo}
                     onChange={(e) => setCorreo(e.target.value)}
                     required
