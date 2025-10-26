@@ -2,12 +2,15 @@ import { useState, useEffect } from "react";
 import type { IUsuario } from "@/interfaces/usuarios";
 import { obtenerUsuarios } from "@/api/usuarios";
 import { AgregarUsuarioModal } from "./AgregarUsuario";
+import { DeshabilitarUsuarioModal } from "./DeshabilitarUsuario";
 
 export function UsuariosPage() {
     const [cargando, setCargando] = useState(false);
     const [buscarValue, setBuscarValue] = useState("");
     const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
     const [modalAgregarUsuarioAbierto, setModalAgregarUsuarioAbierto] = useState(false);
+    const [modalDeshabilitarUsuarioAbierto, setModalDeshabilitarUsuarioAbierto] = useState(false);
+    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<IUsuario | undefined>(undefined);
 
     function cargarUsuarios() {
         setCargando(true);
@@ -54,7 +57,6 @@ export function UsuariosPage() {
                     <table>
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Correo</th>
                                 <th>Nombre</th>
                                 <th>Rol</th>
@@ -64,13 +66,15 @@ export function UsuariosPage() {
                         <tbody>
                             {usuarios.map((usuario) => (
                                 <tr key={usuario.id}>
-                                    <td>{usuario.id}</td>
                                     <td>{usuario.correo}</td>
                                     <td>{usuario.nombre}</td>
                                     <td>{obtenerRolTexto(usuario.rol)}</td>
                                     <td>
                                         <button>Editar</button>
-                                        <button>Deshabilitar</button>
+                                        <button onClick={() => {
+                                            setUsuarioSeleccionado(usuario);
+                                            setModalDeshabilitarUsuarioAbierto(true);
+                                        }}>Deshabilitar</button>
                                     </td>
                                 </tr>
                             ))}
@@ -88,6 +92,16 @@ export function UsuariosPage() {
                         cargarUsuarios();
                     }
                 }}
+            />
+            <DeshabilitarUsuarioModal
+                modalAbierto={modalDeshabilitarUsuarioAbierto}
+                cerrarModal={(recargar) => {
+                    setModalDeshabilitarUsuarioAbierto(false);
+                    if (recargar) {
+                        cargarUsuarios();
+                    }
+                }}
+                usuario={usuarioSeleccionado}
             />
         </>
     );

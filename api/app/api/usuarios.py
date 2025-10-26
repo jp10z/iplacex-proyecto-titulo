@@ -87,3 +87,24 @@ def agregar_usuario():
     bd_conexion.commit()
     cursor.close()
     return {"status": "success", "mensaje": "Usuario agregado correctamente"}, 201
+
+@api.route("/<int:id_usuario>", methods=["DELETE"])
+def deshabilitar_usuario(id_usuario: int):
+    logger.info(f"Deshabilitando usuario {id_usuario}")
+    # obtener conexión a la BD
+    bd_conexion: Connection = g.bd_conexion
+    # actualizar estado del usuario
+    cursor = bd_conexion.cursor()
+    query = """
+        UPDATE usuario
+        SET id_estado = :id_estado
+        WHERE id_usuario = :id_usuario
+    """
+    query_vars = {
+        "id_estado": ESTADOS.INACTIVO,
+        "id_usuario": id_usuario
+    }
+    cursor.execute(query, query_vars)
+    bd_conexion.commit()
+    cursor.close()
+    return {"status": "success", "mensaje": "Usuario deshabilitado correctamente"}, 200
