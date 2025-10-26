@@ -7,3 +7,21 @@
 html {
     background-color: #F8F9FA;
 }
+
+table {
+    border-collapse: collapse;
+}
+th, td {
+    padding: 4px;
+    border: 1px solid #000000;
+    text-align: left;
+}
+
+th {
+    background-color: #DDDDDD;
+}
+
+td button:not(:last-child) {
+    /*Aplicar margen derecho a todos los botones menos al último en caso de que hayan */
+    margin-right: 4px;
+}
