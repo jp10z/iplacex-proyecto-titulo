@@ -1,0 +1,35 @@
+.modal {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    pointer-events: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modalContenido {
+    background-color: #FFFFFF;
+    padding: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.modalHeader { 
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #000000;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+
+.modalCerrar {
+    cursor: pointer;
+}

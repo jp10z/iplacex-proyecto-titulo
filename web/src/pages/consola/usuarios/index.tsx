@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import type { IUsuario } from "@/interfaces/usuarios";
 import { obtenerUsuarios } from "@/api/usuarios";
+import { AgregarUsuarioModal } from "./AgregarUsuario";
 
 export function UsuariosPage() {
     const [buscarValue, setBuscarValue] = useState("");
     const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
+    const [modalAgregarUsuarioAbierto, setModalAgregarUsuarioAbierto] = useState(false);
 
     function cargarUsuarios() {
         obtenerUsuarios()
@@ -24,7 +26,7 @@ export function UsuariosPage() {
         <>
             <h1>Usuarios</h1>
             <div>
-                <button>Agregar usuario</button>
+                <button onClick={() => setModalAgregarUsuarioAbierto(true)}>Agregar usuario</button>
                 <input 
                     type="text" placeholder="Buscar..."
                     value={buscarValue}
@@ -55,6 +57,10 @@ export function UsuariosPage() {
             ) : (
                 <div>No hay usuarios disponibles.</div>
             )}
+            <AgregarUsuarioModal
+                modalAbierto={modalAgregarUsuarioAbierto}
+                cerrarModal={() => setModalAgregarUsuarioAbierto(false)}
+            />
         </>
     );
 }
