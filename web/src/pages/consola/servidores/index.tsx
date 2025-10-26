@@ -1,3 +1,3 @@
 export function ServidoresPage() {
-    return <h1>Página de servidores</h1>;
+    return <h1>Servidores</h1>;
 }

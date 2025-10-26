@@ -22,7 +22,7 @@ export function UsuariosPage() {
 
     return (
         <>
-            <h1>Página de usuarios</h1>
+            <h1>Usuarios</h1>
             <div>
                 <button>Agregar usuario</button>
                 <input 
