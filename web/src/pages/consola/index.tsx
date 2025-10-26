@@ -21,14 +21,16 @@ export function ConsolaPage() {
     return (
         <>
         <Navbar links={NAVBAR_LINKS} />
-        <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/usuarios" element={<UsuariosPage />} />
-            <Route path="/proyectos" element={<ProyectosPage />} />
-            <Route path="/servidores" element={<ServidoresPage />} />
-            <Route path="/eventos" element={<EventosPage />} />
-            <Route path="*" element={<ErrorPage404 />} />
-        </Routes>
+        <div style={{ margin: "10px" }}>
+            <Routes>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/usuarios" element={<UsuariosPage />} />
+                <Route path="/proyectos" element={<ProyectosPage />} />
+                <Route path="/servidores" element={<ServidoresPage />} />
+                <Route path="/eventos" element={<EventosPage />} />
+                <Route path="*" element={<ErrorPage404 />} />
+            </Routes>
+        </div>
       </>
     );
 }
