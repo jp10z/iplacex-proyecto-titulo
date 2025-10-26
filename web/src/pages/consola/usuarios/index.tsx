@@ -59,7 +59,12 @@ export function UsuariosPage() {
             )}
             <AgregarUsuarioModal
                 modalAbierto={modalAgregarUsuarioAbierto}
-                cerrarModal={() => setModalAgregarUsuarioAbierto(false)}
+                cerrarModal={(recargar) => {
+                    setModalAgregarUsuarioAbierto(false);
+                    if (recargar) {
+                        cargarUsuarios();
+                    }
+                }}
             />
         </>
     );

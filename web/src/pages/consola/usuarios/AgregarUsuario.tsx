@@ -4,7 +4,7 @@ import { agregarUsuario } from "@/api/usuarios";
 
 type Props = {
     modalAbierto: boolean;
-    cerrarModal: () => void;
+    cerrarModal: (recargar: boolean) => void;
 }
 
 export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
@@ -19,7 +19,7 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
         agregarUsuario(correo, nombre, contrasenia, rol)
             .then((response) => {
                 console.log("Usuario agregado:", response.data);
-                cerrarModal();
+                cerrarModal(true);
             })
             .catch((error) => {
                 console.error("Error al agregar el usuario:", error);
@@ -38,7 +38,7 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
 
     return <Modal
         modalAbierto={modalAbierto}
-        cerrarModal={cerrarModal}
+        cerrarModal={() => cerrarModal(false)}
         titulo="Agregar Usuario"
     >
         <form onSubmit={doAgregarUsuario}>
