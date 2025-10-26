@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import type { IUsuario } from "../../../interfaces/usuarios";
-import { obtenerUsuarios } from "../../../api/usuarios";
+import type { IUsuario } from "@/interfaces/usuarios";
+import { obtenerUsuarios } from "@/api/usuarios";
 
 export function UsuariosPage() {
     const [buscarValue, setBuscarValue] = useState("");

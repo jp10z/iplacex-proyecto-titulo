@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { LoginPage } from "./pages/login";
-import { ConsolaPage} from "./pages/consola";
-import { ErrorPage404 } from "./pages/error/404";
+import { LoginPage } from "@/pages/login";
+import { ConsolaPage} from "@/pages/consola";
+import { ErrorPage404 } from "@/pages/error/404";
 
 function App() {
 
