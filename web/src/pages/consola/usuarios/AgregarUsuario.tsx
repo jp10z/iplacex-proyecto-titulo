@@ -84,7 +84,9 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
                     <option value="ADMIN">Administrador</option>
                 </select>
             </div>
-            <button type="submit">Agregar</button>
+            <div className="modal-acciones">
+                <button type="submit">Agregar</button>
+            </div>
         </form>
     </Modal>
 }

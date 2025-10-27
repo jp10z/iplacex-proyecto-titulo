@@ -30,12 +30,14 @@ export function DeshabilitarUsuarioModal({ modalAbierto, cerrarModal, usuario }:
     >
         <p>¿Estás seguro de que deseas deshabilitar al siguiente usuario?</p>
         {usuario && (
-            <div>
+            <div style={{ marginTop: "12px" }}>
                 <p><strong>Correo:</strong> {usuario.correo}</p>
                 <p><strong>Nombre:</strong> {usuario.nombre}</p>
             </div>
         )}
-        <button onClick={doDeshabilitarUsuario}>Deshabilitar</button>
-        <button onClick={() => cerrarModal(false)}>Cancelar</button>
+        <div className="modal-acciones">
+            <button onClick={doDeshabilitarUsuario}>Deshabilitar</button>
+            <button onClick={() => cerrarModal(false)}>Cancelar</button>
+        </div>
     </Modal>
 }

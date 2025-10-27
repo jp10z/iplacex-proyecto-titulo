@@ -6,8 +6,8 @@ import { ModificarUsuarioModal } from "./ModificarUsuario";
 import { DeshabilitarUsuarioModal } from "./DeshabilitarUsuario";
 
 export function UsuariosPage() {
-    const [cargando, setCargando] = useState(false);
-    const [buscarValue, setBuscarValue] = useState("");
+    const [cargando, setCargando] = useState(true);
+    const [textoBusqueda, setTextoBusqueda] = useState("");
     const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
     const [modalAgregarUsuarioAbierto, setModalAgregarUsuarioAbierto] = useState(false);
     const [modalModificarUsuarioAbierto, setModalModificarUsuarioAbierto] = useState(false);
@@ -16,7 +16,7 @@ export function UsuariosPage() {
 
     function cargarUsuarios() {
         setCargando(true);
-        obtenerUsuarios()
+        obtenerUsuarios(textoBusqueda)
             .then((response) => {
                 setUsuarios(response.data.datos);
             })
@@ -40,51 +40,60 @@ export function UsuariosPage() {
     }
 
     useEffect(() => {
+        // Cargar usuarios cuando se ingresa a la página
         cargarUsuarios();
     }, []);
 
     return (
         <>
             <h1>Usuarios</h1>
-            <div style={{ marginTop: "4px"}}>
+            <div className="contenedor-responsivo" style={{ marginTop: "4px" }}>
                 <button onClick={() => setModalAgregarUsuarioAbierto(true)}>Agregar usuario</button>
                 <input 
+                    className="item-full"
                     type="text" placeholder="Buscar..."
-                    value={buscarValue}
-                    onChange={(e) => setBuscarValue(e.target.value)}
+                    value={textoBusqueda}
+                    onChange={(e) => setTextoBusqueda(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            cargarUsuarios();
+                        }
+                    }}
                 />
             </div>
             <div style={{ marginTop: "8px"}}>
                 {usuarios.length > 0 && !cargando && (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Correo</th>
-                                <th>Nombre</th>
-                                <th>Rol</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {usuarios.map((usuario) => (
-                                <tr key={usuario.id}>
-                                    <td>{usuario.correo}</td>
-                                    <td>{usuario.nombre}</td>
-                                    <td>{obtenerRolTexto(usuario.rol)}</td>
-                                    <td>
-                                        <button onClick={() => {
-                                            setUsuarioSeleccionado(usuario);
-                                            setModalModificarUsuarioAbierto(true);
-                                        }}>Modificar</button>
-                                        <button onClick={() => {
-                                            setUsuarioSeleccionado(usuario);
-                                            setModalDeshabilitarUsuarioAbierto(true);
-                                        }}>Deshabilitar</button>
-                                    </td>
+                    <div className="tabla-contenedor">
+                        <table className="tabla-datos">
+                            <thead>
+                                <tr>
+                                    <th>Correo</th>
+                                    <th>Nombre</th>
+                                    <th>Rol</th>
+                                    <th style={{ width: "150px" }}>Acciones</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {usuarios.map((usuario) => (
+                                    <tr key={usuario.id}>
+                                        <td>{usuario.correo}</td>
+                                        <td>{usuario.nombre}</td>
+                                        <td>{obtenerRolTexto(usuario.rol)}</td>
+                                        <td>
+                                            <button onClick={() => {
+                                                setUsuarioSeleccionado(usuario);
+                                                setModalModificarUsuarioAbierto(true);
+                                            }}>Modificar</button>
+                                            <button onClick={() => {
+                                                setUsuarioSeleccionado(usuario);
+                                                setModalDeshabilitarUsuarioAbierto(true);
+                                            }}>Deshabilitar</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
                 {cargando && <p>Cargando usuarios...</p>}
                 {!cargando && usuarios.length === 0 && <p>No hay usuarios disponibles.</p>}

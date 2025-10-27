@@ -3,8 +3,8 @@ import type { IUsuariosResponse } from "@/interfaces/usuarios";
 
 const BASE_URL = "http://localhost:5000/api";
 
-export async function obtenerUsuarios() {
-    return await axios.get<IUsuariosResponse>(`${BASE_URL}/usuarios`);
+export async function obtenerUsuarios(textoBusqueda: string) {
+    return await axios.get<IUsuariosResponse>(`${BASE_URL}/usuarios?buscar=${textoBusqueda}`);
 }
 
 export async function agregarUsuario(correo: string, nombre: string, contrasenia: string, rol: string) {

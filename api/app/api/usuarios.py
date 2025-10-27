@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 @api.route("", methods=["GET"])
 def obtener_usuarios():
     logger.info("Obteniendo usuarios desde la BD")
+    # obtener parametros desde la request
+    texto_busqueda = request.args.get("buscar", "").strip()
+    logger.debug(f"Buscando usuarios con texto: '{texto_busqueda}'")
     # Obtener usuarios desde la BD
     bd_conexion: Connection = g.bd_conexion
     cursor = bd_conexion.cursor()
@@ -20,9 +23,14 @@ def obtener_usuarios():
         INNER JOIN rol r
             ON u.id_rol = r.id_rol
         WHERE u.id_estado = :id_estado
-    """
+        AND (
+            u.correo COLLATE BINARY_AI LIKE '%' || :texto_busqueda || '%'
+            OR u.nombre COLLATE BINARY_AI LIKE '%' || :texto_busqueda || '%'
+        )
+    """ # uso COLLATE BINARY_AI para que no sea sensible a mayúsculas/minúsculas/acentos
     query_vars = {
-        "id_estado": ESTADOS.ACTIVO
+        "id_estado": ESTADOS.ACTIVO,
+        "texto_busqueda": texto_busqueda
     }
     cursor.execute(query, query_vars)
     resultados = cursor.fetchall()

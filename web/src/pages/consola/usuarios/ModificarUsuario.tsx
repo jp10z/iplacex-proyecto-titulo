@@ -86,7 +86,9 @@ export function ModificarUsuarioModal({ modalAbierto, cerrarModal, usuario }: Pr
                     <option value="ADMIN">Administrador</option>
                 </select>
             </div>
-            <button type="submit">Guardar</button>
+            <div className="modal-acciones">
+                <button type="submit">Guardar</button>
+            </div>
         </form>
     </Modal>
 }
