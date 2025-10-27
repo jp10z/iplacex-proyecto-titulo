@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { IUsuario } from "@/interfaces/usuarios";
+import type { IUsuariosResponse, IUsuario } from "@/interfaces/usuarios";
 import { obtenerUsuarios } from "@/api/usuarios";
 import { AgregarUsuarioModal } from "./AgregarUsuario";
 import { ModificarUsuarioModal } from "./ModificarUsuario";
@@ -8,7 +8,9 @@ import { DeshabilitarUsuarioModal } from "./DeshabilitarUsuario";
 export function UsuariosPage() {
     const [cargando, setCargando] = useState(true);
     const [textoBusqueda, setTextoBusqueda] = useState("");
-    const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
+    const [paginacion, setPaginacion] = useState({ index: 1, size: 10 });
+    const [ordenamiento, setOrdenamiento] = useState({columna: "nombre", direccion: "asc"});
+    const [usuarios, setUsuarios] = useState<IUsuariosResponse>({ items: [], total: 0 });
     const [modalAgregarUsuarioAbierto, setModalAgregarUsuarioAbierto] = useState(false);
     const [modalModificarUsuarioAbierto, setModalModificarUsuarioAbierto] = useState(false);
     const [modalDeshabilitarUsuarioAbierto, setModalDeshabilitarUsuarioAbierto] = useState(false);
@@ -16,9 +18,9 @@ export function UsuariosPage() {
 
     function cargarUsuarios() {
         setCargando(true);
-        obtenerUsuarios(textoBusqueda)
+        obtenerUsuarios(paginacion.index, paginacion.size, ordenamiento.columna, ordenamiento.direccion, textoBusqueda)
             .then((response) => {
-                setUsuarios(response.data.datos);
+                setUsuarios(response.data);
             })
             .catch((error) => {
                 console.error("Error al obtener los usuarios:", error);
@@ -62,7 +64,7 @@ export function UsuariosPage() {
                 />
             </div>
             <div style={{ marginTop: "8px"}}>
-                {usuarios.length > 0 && !cargando && (
+                {usuarios.items.length > 0 && !cargando && (
                     <div className="tabla-contenedor">
                         <table className="tabla-datos">
                             <thead>
@@ -74,7 +76,7 @@ export function UsuariosPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {usuarios.map((usuario) => (
+                                {usuarios.items.map((usuario) => (
                                     <tr key={usuario.id}>
                                         <td>{usuario.correo}</td>
                                         <td>{usuario.nombre}</td>
@@ -96,7 +98,7 @@ export function UsuariosPage() {
                     </div>
                 )}
                 {cargando && <p>Cargando usuarios...</p>}
-                {!cargando && usuarios.length === 0 && <p>No hay usuarios disponibles.</p>}
+                {!cargando && usuarios.items.length === 0 && <p>No hay usuarios disponibles.</p>}
             </div>
             <AgregarUsuarioModal
                 modalAbierto={modalAgregarUsuarioAbierto}

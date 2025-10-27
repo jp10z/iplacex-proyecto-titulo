@@ -7,6 +7,6 @@ export interface IUsuario {
 }
 
 export interface IUsuariosResponse {
-    datos: IUsuario[];
+    items: IUsuario[];
     total: number;
 }

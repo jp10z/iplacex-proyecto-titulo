@@ -3,6 +3,7 @@ from flask import Blueprint, g, request
 from oracledb import Connection
 from app.common import contrasenias
 from app.maestros import ESTADOS, ROLES
+from app.crud import usuarios as crud_usuarios
 
 api = Blueprint("usuarios", __name__, url_prefix="/api/usuarios")
 
@@ -13,38 +14,30 @@ def obtener_usuarios():
     logger.info("Obteniendo usuarios desde la BD")
     # obtener parametros desde la request
     texto_busqueda = request.args.get("buscar", "").strip()
+    pagina_index = int(request.args.get("paginaIndex", "1"))
+    pagina_size = int(request.args.get("paginaSize", "10"))
+    ordenar_columna = request.args.get("ordenarColumna", "id_usuario")
+    ordenar_direccion = request.args.get("ordenarDireccion", "asc")
     logger.debug(f"Buscando usuarios con texto: '{texto_busqueda}'")
     # Obtener usuarios desde la BD
-    bd_conexion: Connection = g.bd_conexion
-    cursor = bd_conexion.cursor()
-    query = """
-        SELECT u.id_usuario, u.correo, u.nombre, r.nombre AS rol
-        FROM usuario u
-        INNER JOIN rol r
-            ON u.id_rol = r.id_rol
-        WHERE u.id_estado = :id_estado
-        AND (
-            u.correo COLLATE BINARY_AI LIKE '%' || :texto_busqueda || '%'
-            OR u.nombre COLLATE BINARY_AI LIKE '%' || :texto_busqueda || '%'
-        )
-    """ # uso COLLATE BINARY_AI para que no sea sensible a mayúsculas/minúsculas/acentos
-    query_vars = {
-        "id_estado": ESTADOS.ACTIVO,
-        "texto_busqueda": texto_busqueda
-    }
-    cursor.execute(query, query_vars)
-    resultados = cursor.fetchall()
-    cursor.close()
+    usuarios, total = crud_usuarios.obtener_usuarios_con_paginacion(
+        g.bd_conexion,
+        pagina_index,
+        pagina_size,
+        ordenar_columna,
+        ordenar_direccion,
+        texto_busqueda
+    )
     # Formatear resultados
-    datos = []
-    for fila in resultados:
-        datos.append({
+    items = []
+    for fila in usuarios:
+        items.append({
             "id": fila[0],
             "correo": fila[1],
             "nombre": fila[2],
             "rol": fila[3],
         })
-    return {"datos": datos, "total": len(datos)}, 200
+    return {"items": items, "total": total}, 200
 
 @api.route("", methods=["POST"])
 def agregar_usuario():
@@ -68,32 +61,12 @@ def agregar_usuario():
     # obtener conexión a la BD
     bd_conexion: Connection = g.bd_conexion
     # validar si el correo ya existe
-    cursor = bd_conexion.cursor()
-    query = "SELECT COUNT(*) FROM usuario WHERE correo = :correo"
-    query_vars = {
-        "correo": datos["correo"]
-    }
-    cursor.execute(query, query_vars)
-    existe = cursor.fetchone()[0] > 0
-    cursor.close()
-    if existe:
+    usuario_existente = crud_usuarios.obtener_usuario_por_correo(bd_conexion, correo)
+    if usuario_existente is not None:
         return {"status": "error", "mensaje": "El correo ya está en uso"}, 422
     # insertar en la BD
-    cursor = bd_conexion.cursor()
-    query = """
-        INSERT INTO usuario (correo, nombre, contrasenia, id_rol, id_estado)
-        VALUES (:correo, :nombre, :contrasenia, :id_rol, :id_estado)
-    """
-    query_vars = {
-        "correo": correo,
-        "nombre": nombre,
-        "contrasenia": hash_contrasenia,
-        "id_rol": id_rol,
-        "id_estado": ESTADOS.ACTIVO
-    }
-    cursor.execute(query, query_vars)
+    crud_usuarios.agregar_usuario(bd_conexion, correo, nombre, hash_contrasenia, id_rol)
     bd_conexion.commit()
-    cursor.close()
     return {"status": "success", "mensaje": "Usuario agregado correctamente"}, 201
 
 @api.route("/<int:id_usuario>", methods=["PUT"])
@@ -115,47 +88,13 @@ def modificar_usuario(id_usuario: int):
         return {"status": "error", "mensaje": "Rol no válido"}, 422
     # obtener conexión a la BD
     bd_conexion: Connection = g.bd_conexion
-    # validar si el correo ya existe en otro usuario
-    cursor = bd_conexion.cursor()
-    query = "SELECT COUNT(*) FROM usuario WHERE correo = :correo AND id_usuario != :id_usuario"
-    query_vars = {
-        "correo": correo,
-        "id_usuario": id_usuario
-    }
-    cursor.execute(query, query_vars)
-    existe = cursor.fetchone()[0] > 0
-    cursor.close()
-    if existe:
+    # validar si el correo ya existe en otro usuario (que no sea el mismo)
+    usuario_existente = crud_usuarios.obtener_usuario_por_correo(bd_conexion, correo)
+    if usuario_existente is not None and usuario_existente[0] != id_usuario:
         return {"status": "error", "mensaje": "El correo ya está en uso"}, 422
     # actualizar usuario en la BD
-    cursor = bd_conexion.cursor()
-    query = """
-        UPDATE usuario
-        SET correo = :correo, nombre = :nombre, id_rol = :id_rol
-        WHERE id_usuario = :id_usuario
-    """
-    query_vars = {
-        "correo": correo,
-        "nombre": nombre,
-        "id_rol": id_rol,
-        "id_usuario": id_usuario
-    }
-    cursor.execute(query, query_vars)
-    # actualizar la contraseña si se ingresó una nueva
-    if contrasenia:
-        hash_contrasenia = contrasenias.generar_hash_contrasenia(contrasenia)
-        query = """
-            UPDATE usuario
-            SET contrasenia = :contrasenia
-            WHERE id_usuario = :id_usuario
-        """
-        query_vars = {
-            "contrasenia": hash_contrasenia,
-            "id_usuario": id_usuario
-        }
-        cursor.execute(query, query_vars)
+    crud_usuarios.modificar_usuario(bd_conexion, id_usuario, correo, nombre, id_rol, contrasenia)
     bd_conexion.commit()
-    cursor.close()
     return {"status": "success", "mensaje": "Usuario modificado correctamente"}, 200
 
 @api.route("/<int:id_usuario>", methods=["DELETE"])
@@ -164,17 +103,6 @@ def deshabilitar_usuario(id_usuario: int):
     # obtener conexión a la BD
     bd_conexion: Connection = g.bd_conexion
     # actualizar estado del usuario
-    cursor = bd_conexion.cursor()
-    query = """
-        UPDATE usuario
-        SET id_estado = :id_estado
-        WHERE id_usuario = :id_usuario
-    """
-    query_vars = {
-        "id_estado": ESTADOS.INACTIVO,
-        "id_usuario": id_usuario
-    }
-    cursor.execute(query, query_vars)
+    crud_usuarios.actualizar_estado_usuario(bd_conexion, id_usuario, ESTADOS.INACTIVO)
     bd_conexion.commit()
-    cursor.close()
     return {"status": "success", "mensaje": "Usuario deshabilitado correctamente"}, 200
