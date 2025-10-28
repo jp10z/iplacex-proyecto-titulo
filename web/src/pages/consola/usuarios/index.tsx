@@ -44,7 +44,7 @@ export function UsuariosPage() {
     useEffect(() => {
         // Cargar usuarios cuando se ingresa a la página
         cargarUsuarios();
-    }, []);
+    }, [paginacion, ordenamiento]);
 
     return (
         <>
@@ -58,7 +58,8 @@ export function UsuariosPage() {
                     onChange={(e) => setTextoBusqueda(e.target.value)}
                     onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                            cargarUsuarios();
+                            // Truco para reiniciar la paginación al buscar, esto fuerza el useEffect a recargar los usuarios
+                            setPaginacion({ ...paginacion, index: 1 });
                         }
                     }}
                 />
@@ -106,12 +107,33 @@ export function UsuariosPage() {
                         </table>
                     </div>
             </div>
+            <div style={{ marginTop: "8px", display: "flex", justifyContent: "right", gap: "4px" }}>
+                <p style={{ display: "flex", alignItems: "center" }}>Página {paginacion.index} de {Math.ceil(usuarios.total / paginacion.size)}</p>
+                <button
+                    onClick={() => {
+                        if (paginacion.index > 1) {
+                            setPaginacion({ ...paginacion, index: paginacion.index - 1 });
+                        }
+                    }}
+                >
+                    Anterior
+                </button>
+                <button
+                    onClick={() => {
+                        if (paginacion.index < Math.ceil(usuarios.total / paginacion.size)) {
+                            setPaginacion({ ...paginacion, index: paginacion.index + 1 });
+                        }
+                    }}
+                >
+                    Siguiente
+                </button>
+            </div>
             <AgregarUsuarioModal
                 modalAbierto={modalAgregarUsuarioAbierto}
                 cerrarModal={(recargar) => {
                     setModalAgregarUsuarioAbierto(false);
                     if (recargar) {
-                        cargarUsuarios();
+                        setPaginacion({ ...paginacion, index: 1 });
                     }
                 }}
             />
@@ -120,7 +142,7 @@ export function UsuariosPage() {
                 cerrarModal={(recargar) => {
                     setModalDeshabilitarUsuarioAbierto(false);
                     if (recargar) {
-                        cargarUsuarios();
+                        setPaginacion({ ...paginacion, index: 1 });
                     }
                 }}
                 usuario={usuarioSeleccionado}
@@ -130,7 +152,7 @@ export function UsuariosPage() {
                 cerrarModal={(recargar) => {
                     setModalModificarUsuarioAbierto(false);
                     if (recargar) {
-                        cargarUsuarios();
+                        setPaginacion({ ...paginacion, index: 1 });
                     }
                 }}
                 usuario={usuarioSeleccionado}
