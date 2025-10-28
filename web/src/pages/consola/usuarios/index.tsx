@@ -64,7 +64,6 @@ export function UsuariosPage() {
                 />
             </div>
             <div style={{ marginTop: "8px"}}>
-                {usuarios.items.length > 0 && !cargando && (
                     <div className="tabla-contenedor">
                         <table className="tabla-datos">
                             <thead>
@@ -76,7 +75,7 @@ export function UsuariosPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {usuarios.items.map((usuario) => (
+                                {usuarios.items.length > 0 && !cargando && usuarios.items.map((usuario) => (
                                     <tr key={usuario.id}>
                                         <td>{usuario.correo}</td>
                                         <td>{usuario.nombre}</td>
@@ -93,12 +92,19 @@ export function UsuariosPage() {
                                         </td>
                                     </tr>
                                 ))}
+                                {cargando && (
+                                    <tr>
+                                        <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>Cargando usuarios...</td>
+                                    </tr>
+                                )}
+                                {!cargando && usuarios.items.length === 0 && (
+                                    <tr>
+                                        <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>No se encontraron usuarios.</td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
-                )}
-                {cargando && <p>Cargando usuarios...</p>}
-                {!cargando && usuarios.items.length === 0 && <p>No hay usuarios disponibles.</p>}
             </div>
             <AgregarUsuarioModal
                 modalAbierto={modalAgregarUsuarioAbierto}
