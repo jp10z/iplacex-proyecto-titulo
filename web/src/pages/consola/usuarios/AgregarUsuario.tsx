@@ -25,6 +25,11 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
             })
             .catch((error) => {
                 console.error("Error al agregar el usuario:", error);
+                if (error.status === 422) {
+                    toast.warning("Error al agregar usuario", error.response.data.mensaje);
+                }else{
+                    toast.error("Error al agregar usuario", "Ha ocurrido un error al agregar el usuario.");
+                }
             });
     }
 

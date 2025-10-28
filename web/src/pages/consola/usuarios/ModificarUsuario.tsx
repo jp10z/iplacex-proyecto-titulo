@@ -28,6 +28,11 @@ export function ModificarUsuarioModal({ modalAbierto, cerrarModal, usuario }: Pr
             })
             .catch((error) => {
                 console.error("Error al modificar el usuario:", error);
+                if (error.status === 422) {
+                    toast.warning("Error al modificar usuario", error.response.data.mensaje);
+                }else{
+                    toast.error("Error al modificar usuario", "Ha ocurrido un error al modificar el usuario.");
+                }
             });
     }
 
