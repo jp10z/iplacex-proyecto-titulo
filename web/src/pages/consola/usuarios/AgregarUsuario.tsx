@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Modal } from "@/components/modal";
 import { agregarUsuario } from "@/api/usuarios";
+import { toast } from "@/common/toast";
 
 type Props = {
     modalAbierto: boolean;
@@ -19,6 +20,7 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
         agregarUsuario(correo, nombre, contrasenia, rol)
             .then((response) => {
                 console.log("Usuario agregado:", response.data);
+                toast.success("Usuario agregado", "El usuario ha sido agregado correctamente.");
                 cerrarModal(true);
             })
             .catch((error) => {

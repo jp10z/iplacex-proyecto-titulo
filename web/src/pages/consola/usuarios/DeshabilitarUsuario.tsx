@@ -1,6 +1,7 @@
 import { Modal } from "@/components/modal";
 import type { IUsuario } from "@/interfaces/usuarios";
 import { deshabilitarUsuario } from "@/api/usuarios";
+import { toast } from "@/common/toast";
 
 type Props = {
     modalAbierto: boolean;
@@ -16,6 +17,7 @@ export function DeshabilitarUsuarioModal({ modalAbierto, cerrarModal, usuario }:
         deshabilitarUsuario(usuario.id)
             .then((response) => {
                 console.log("Usuario deshabilitado:", response.data);
+                toast.success("Usuario deshabilitado", "El usuario ha sido deshabilitado correctamente.");
                 cerrarModal(true);
             })
             .catch((error) => {

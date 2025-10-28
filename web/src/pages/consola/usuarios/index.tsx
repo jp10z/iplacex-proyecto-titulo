@@ -49,7 +49,7 @@ export function UsuariosPage() {
     return (
         <>
             <h1>Usuarios</h1>
-            <div className="contenedor-responsivo" style={{ marginTop: "4px" }}>
+            <div className="contenedor-responsivo" style={{ marginTop: "4px", marginBottom: "8px" }}>
                 <button onClick={() => setModalAgregarUsuarioAbierto(true)}>Agregar usuario</button>
                 <input 
                     className="item-full"

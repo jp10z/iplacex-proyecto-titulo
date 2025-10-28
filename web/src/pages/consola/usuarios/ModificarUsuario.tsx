@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Modal } from "@/components/modal";
 import { modificarUsuario } from "@/api/usuarios";
 import type { IUsuario } from "@/interfaces/usuarios";
+import { toast } from "@/common/toast";
 
 type Props = {
     modalAbierto: boolean;
@@ -22,6 +23,7 @@ export function ModificarUsuarioModal({ modalAbierto, cerrarModal, usuario }: Pr
         modificarUsuario(usuario.id, correo, nombre, contrasenia, rol)
             .then((response) => {
                 console.log("Usuario modificado:", response.data);
+                toast.success("Usuario modificado", "El usuario ha sido modificado correctamente.");
                 cerrarModal(true);
             })
             .catch((error) => {
