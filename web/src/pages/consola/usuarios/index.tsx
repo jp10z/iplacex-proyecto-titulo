@@ -5,6 +5,7 @@ import { AgregarUsuarioModal } from "./AgregarUsuario";
 import { ModificarUsuarioModal } from "./ModificarUsuario";
 import { DeshabilitarUsuarioModal } from "./DeshabilitarUsuario";
 import { OverlayCarga } from "@/components/overlay-carga";
+import { PaginacionFooter } from "@/components/paginacion-footer";
 
 export function UsuariosPage() {
     const [cargando, setCargando] = useState(true);
@@ -110,29 +111,12 @@ export function UsuariosPage() {
                             </OverlayCarga>
                 </div>
             </div>
-            <div style={{ marginTop: "8px", display: "flex", justifyContent: "right", gap: "4px" }}>
-                <p style={{ display: "flex", alignItems: "center" }}>Página {paginacion.index} de {Math.ceil(usuarios.total / paginacion.size)}</p>
-                <button
-                    disabled={paginacion.index <= 1 || cargando}
-                    onClick={() => {
-                        if (paginacion.index > 1) {
-                            setPaginacion({ ...paginacion, index: paginacion.index - 1 });
-                        }
-                    }}
-                >
-                    Anterior
-                </button>
-                <button
-                    disabled={paginacion.index >= Math.ceil(usuarios.total / paginacion.size) || cargando}
-                    onClick={() => {
-                        if (paginacion.index < Math.ceil(usuarios.total / paginacion.size)) {
-                            setPaginacion({ ...paginacion, index: paginacion.index + 1 });
-                        }
-                    }}
-                >
-                    Siguiente
-                </button>
-            </div>
+            <PaginacionFooter
+                paginacionActual={paginacion.index}
+                totalPaginas={Math.ceil(usuarios.total / paginacion.size)}
+                onPaginaChange={(nuevaPagina) => setPaginacion({ ...paginacion, index: nuevaPagina })}
+                cargando={cargando}
+            />
             <AgregarUsuarioModal
                 modalAbierto={modalAgregarUsuarioAbierto}
                 cerrarModal={(recargar) => {
