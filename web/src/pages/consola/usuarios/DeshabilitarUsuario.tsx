@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Modal } from "@/components/modal";
 import type { IUsuario } from "@/interfaces/usuarios";
 import { deshabilitarUsuario } from "@/api/usuarios";
 import { toast } from "@/common/toast";
+import { OverlayCarga } from "@/components/overlay-carga";
 
 type Props = {
     modalAbierto: boolean;
@@ -10,10 +12,12 @@ type Props = {
 };
 
 export function DeshabilitarUsuarioModal({ modalAbierto, cerrarModal, usuario }: Props) {
+    const [cargando, setCargando] = useState(false);
     function doDeshabilitarUsuario() {
         if (!usuario) {
             return;
         }
+        setCargando(true);
         deshabilitarUsuario(usuario.id)
             .then((response) => {
                 console.log("Usuario deshabilitado:", response.data);
@@ -22,6 +26,9 @@ export function DeshabilitarUsuarioModal({ modalAbierto, cerrarModal, usuario }:
             })
             .catch((error) => {
                 console.error("Error al deshabilitar el usuario:", error);
+            })
+            .finally(() => {
+                setCargando(false);
             });
     }
 
@@ -29,17 +36,20 @@ export function DeshabilitarUsuarioModal({ modalAbierto, cerrarModal, usuario }:
         modalAbierto={modalAbierto}
         cerrarModal={() => cerrarModal(false)}
         titulo="Deshabilitar Usuario"
+        deshabilitarCerrar={cargando}
     >
-        <p>¿Estás seguro de que deseas deshabilitar al siguiente usuario?</p>
-        {usuario && (
-            <div style={{ marginTop: "12px" }}>
-                <p><strong>Correo:</strong> {usuario.correo}</p>
-                <p><strong>Nombre:</strong> {usuario.nombre}</p>
+        <OverlayCarga cargando={cargando}>
+            <p>¿Estás seguro de que deseas deshabilitar al siguiente usuario?</p>
+            {usuario && (
+                <div style={{ marginTop: "12px" }}>
+                    <p><strong>Correo:</strong> {usuario.correo}</p>
+                    <p><strong>Nombre:</strong> {usuario.nombre}</p>
+                </div>
+            )}
+            <div className="modal-acciones">
+                <button onClick={doDeshabilitarUsuario}>Deshabilitar</button>
+                <button onClick={() => cerrarModal(false)}>Cancelar</button>
             </div>
-        )}
-        <div className="modal-acciones">
-            <button onClick={doDeshabilitarUsuario}>Deshabilitar</button>
-            <button onClick={() => cerrarModal(false)}>Cancelar</button>
-        </div>
+        </OverlayCarga>
     </Modal>
 }

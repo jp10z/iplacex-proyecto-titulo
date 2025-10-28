@@ -4,6 +4,7 @@ import { obtenerUsuarios } from "@/api/usuarios";
 import { AgregarUsuarioModal } from "./AgregarUsuario";
 import { ModificarUsuarioModal } from "./ModificarUsuario";
 import { DeshabilitarUsuarioModal } from "./DeshabilitarUsuario";
+import { OverlayCarga } from "@/components/overlay-carga";
 
 export function UsuariosPage() {
     const [cargando, setCargando] = useState(true);
@@ -49,11 +50,12 @@ export function UsuariosPage() {
         <>
             <h1>Usuarios</h1>
             <div className="contenedor-responsivo" style={{ marginTop: "4px", marginBottom: "8px" }}>
-                <button onClick={() => setModalAgregarUsuarioAbierto(true)}>Agregar usuario</button>
+                <button disabled={cargando} onClick={() => setModalAgregarUsuarioAbierto(true)}>Agregar usuario</button>
                 <input 
                     className="item-full"
                     type="text" placeholder="Buscar..."
                     value={textoBusqueda}
+                    readOnly={cargando}
                     onChange={(e) => setTextoBusqueda(e.target.value)}
                     onKeyDown={(e) => {
                         if (e.key === "Enter") {
@@ -64,18 +66,19 @@ export function UsuariosPage() {
                 />
             </div>
             <div style={{ marginTop: "8px"}}>
-                    <div className="tabla-contenedor">
-                        <table className="tabla-datos">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Correo</th>
-                                    <th>Rol</th>
-                                    <th style={{ width: "150px" }}>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {usuarios.items.length > 0 && !cargando && usuarios.items.map((usuario) => (
+                <div className="tabla-contenedor">
+                            <OverlayCarga cargando={cargando}>
+                    <table className="tabla-datos">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th style={{ width: "150px" }}>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {usuarios.items.length > 0 && usuarios.items.map((usuario) => (
                                     <tr key={usuario.id}>
                                         <td>{usuario.nombre}</td>
                                         <td>{usuario.correo}</td>
@@ -92,23 +95,25 @@ export function UsuariosPage() {
                                         </td>
                                     </tr>
                                 ))}
-                                {cargando && (
-                                    <tr>
-                                        <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>Cargando usuarios...</td>
-                                    </tr>
-                                )}
                                 {!cargando && usuarios.items.length === 0 && (
                                     <tr>
                                         <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>No se encontraron usuarios.</td>
                                     </tr>
                                 )}
+                                {cargando && usuarios.items.length === 0 && (
+                                    <tr>
+                                        <td colSpan={4} style={{ height: "50px" }}></td>
+                                    </tr>
+                                )}
                             </tbody>
-                        </table>
-                    </div>
+                    </table>
+                            </OverlayCarga>
+                </div>
             </div>
             <div style={{ marginTop: "8px", display: "flex", justifyContent: "right", gap: "4px" }}>
                 <p style={{ display: "flex", alignItems: "center" }}>Página {paginacion.index} de {Math.ceil(usuarios.total / paginacion.size)}</p>
                 <button
+                    disabled={paginacion.index <= 1 || cargando}
                     onClick={() => {
                         if (paginacion.index > 1) {
                             setPaginacion({ ...paginacion, index: paginacion.index - 1 });
@@ -118,6 +123,7 @@ export function UsuariosPage() {
                     Anterior
                 </button>
                 <button
+                    disabled={paginacion.index >= Math.ceil(usuarios.total / paginacion.size) || cargando}
                     onClick={() => {
                         if (paginacion.index < Math.ceil(usuarios.total / paginacion.size)) {
                             setPaginacion({ ...paginacion, index: paginacion.index + 1 });

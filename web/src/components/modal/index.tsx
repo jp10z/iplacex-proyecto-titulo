@@ -5,9 +5,10 @@ type Props = {
     cerrarModal?: () => void;
     titulo: string;
     children: React.ReactNode;
+    deshabilitarCerrar?: boolean;
 }
 
-export function Modal({ modalAbierto, titulo, children, cerrarModal }: Props) {
+export function Modal({ modalAbierto, titulo, children, cerrarModal, deshabilitarCerrar = false }: Props) {
     if (!modalAbierto) {
         return null;
     }
@@ -17,7 +18,7 @@ export function Modal({ modalAbierto, titulo, children, cerrarModal }: Props) {
             <div className={classes.modalContenido}>
                 <div className={classes.modalHeader}>
                     <h2>{titulo}</h2>
-                    {cerrarModal && <span className={classes.modalCerrar} onClick={cerrarModal}>X</span>}
+                    {cerrarModal && !deshabilitarCerrar && <span className={classes.modalCerrar} onClick={cerrarModal}>X</span>}
                 </div>
                 <div className={classes.modalCuerpo}>
                     {children}
