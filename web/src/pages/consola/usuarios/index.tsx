@@ -9,7 +9,6 @@ export function UsuariosPage() {
     const [cargando, setCargando] = useState(true);
     const [textoBusqueda, setTextoBusqueda] = useState("");
     const [paginacion, setPaginacion] = useState({ index: 1, size: 10 });
-    const [ordenamiento, setOrdenamiento] = useState({columna: "nombre", direccion: "asc"});
     const [usuarios, setUsuarios] = useState<IUsuariosResponse>({ items: [], total: 0 });
     const [modalAgregarUsuarioAbierto, setModalAgregarUsuarioAbierto] = useState(false);
     const [modalModificarUsuarioAbierto, setModalModificarUsuarioAbierto] = useState(false);
@@ -18,7 +17,7 @@ export function UsuariosPage() {
 
     function cargarUsuarios() {
         setCargando(true);
-        obtenerUsuarios(paginacion.index, paginacion.size, ordenamiento.columna, ordenamiento.direccion, textoBusqueda)
+        obtenerUsuarios(paginacion.index, paginacion.size, textoBusqueda)
             .then((response) => {
                 setUsuarios(response.data);
             })
@@ -44,7 +43,7 @@ export function UsuariosPage() {
     useEffect(() => {
         // Cargar usuarios cuando se ingresa a la página
         cargarUsuarios();
-    }, [paginacion, ordenamiento]);
+    }, [paginacion]);
 
     return (
         <>
@@ -69,8 +68,8 @@ export function UsuariosPage() {
                         <table className="tabla-datos">
                             <thead>
                                 <tr>
-                                    <th>Correo</th>
                                     <th>Nombre</th>
+                                    <th>Correo</th>
                                     <th>Rol</th>
                                     <th style={{ width: "150px" }}>Acciones</th>
                                 </tr>
@@ -78,8 +77,8 @@ export function UsuariosPage() {
                             <tbody>
                                 {usuarios.items.length > 0 && !cargando && usuarios.items.map((usuario) => (
                                     <tr key={usuario.id}>
-                                        <td>{usuario.correo}</td>
                                         <td>{usuario.nombre}</td>
+                                        <td>{usuario.correo}</td>
                                         <td>{obtenerRolTexto(usuario.rol)}</td>
                                         <td>
                                             <button onClick={() => {

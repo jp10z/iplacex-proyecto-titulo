@@ -3,8 +3,8 @@ import type { IUsuariosResponse } from "@/interfaces/usuarios";
 
 const BASE_URL = "http://localhost:5000/api";
 
-export async function obtenerUsuarios(paginaIndex: number, paginaSize: number, ordenarColumna: string, ordenarDireccion: string, textoBusqueda: string) {
-    return await axios.get<IUsuariosResponse>(`${BASE_URL}/usuarios?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}&ordenarColumna=${ordenarColumna}&ordenarDireccion=${ordenarDireccion}`);
+export async function obtenerUsuarios(paginaIndex: number, paginaSize: number, textoBusqueda: string) {
+    return await axios.get<IUsuariosResponse>(`${BASE_URL}/usuarios?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}`);
 }
 
 export async function agregarUsuario(correo: string, nombre: string, contrasenia: string, rol: string) {

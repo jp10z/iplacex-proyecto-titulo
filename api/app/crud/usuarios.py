@@ -3,7 +3,7 @@ from datetime import datetime
 from app.common import sql
 from app.maestros import ESTADOS
 
-def obtener_usuarios_con_paginacion(bd_conexion: Connection, pagina_index: int, pagina_size: int, ordenar_columna: str, ordenar_direccion: str, texto_busqueda: str):
+def obtener_usuarios_con_paginacion(bd_conexion: Connection, pagina_index: int, pagina_size: int, texto_busqueda: str):
     cursor = bd_conexion.cursor()
     query_base = """
         SELECT {columnas}
@@ -19,11 +19,10 @@ def obtener_usuarios_con_paginacion(bd_conexion: Connection, pagina_index: int, 
     # obtener los usuarios con paginación
     query_con_paginacion = sql.obtener_query_paginacion(
         query_base.replace("{columnas}", "u.id_usuario, u.correo, u.nombre, r.nombre AS rol"),
-        ordenar_columna,
-        ordenar_direccion,
+        "u.nombre",
+        "ASC",
         pagina_index,
-        pagina_size,
-        {"id_usuario": "u.id_usuario", "correo": "u.correo", "nombre": "u.nombre"}
+        pagina_size
     )
     query_vars = {
         "id_estado": ESTADOS.ACTIVO,

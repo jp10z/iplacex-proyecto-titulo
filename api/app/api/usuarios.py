@@ -16,16 +16,12 @@ def obtener_usuarios():
     texto_busqueda = request.args.get("buscar", "").strip()
     pagina_index = int(request.args.get("paginaIndex", "1"))
     pagina_size = int(request.args.get("paginaSize", "10"))
-    ordenar_columna = request.args.get("ordenarColumna", "id_usuario")
-    ordenar_direccion = request.args.get("ordenarDireccion", "asc")
     logger.debug(f"Buscando usuarios con texto: '{texto_busqueda}'")
     # Obtener usuarios desde la BD
     usuarios, total = crud_usuarios.obtener_usuarios_con_paginacion(
         g.bd_conexion,
         pagina_index,
         pagina_size,
-        ordenar_columna,
-        ordenar_direccion,
         texto_busqueda
     )
     # Formatear resultados
