@@ -31,7 +31,7 @@ def obtener_usuarios_con_paginacion(bd_conexion: Connection, pagina_index: int, 
     cursor.execute(query_con_paginacion, query_vars)
     resultado_items = cursor.fetchall()
     # obtener el total según los filtros
-    query_total = query_base.replace("{columnas}", "COUNT(*)")
+    query_total = sql.obtener_query_total(query_base)
     cursor.execute(query_total, query_vars)
     resultado_total = cursor.fetchone()[0]
     cursor.close()

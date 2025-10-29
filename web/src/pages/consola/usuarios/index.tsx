@@ -6,6 +6,7 @@ import { ModificarUsuarioModal } from "./ModificarUsuario";
 import { DeshabilitarUsuarioModal } from "./DeshabilitarUsuario";
 import { OverlayCarga } from "@/components/overlay-carga";
 import { PaginacionFooter } from "@/components/paginacion-footer";
+import { toast } from "@/common/toast";
 
 export function UsuariosPage() {
     const [cargando, setCargando] = useState(true);
@@ -25,6 +26,7 @@ export function UsuariosPage() {
             })
             .catch((error) => {
                 console.error("Error al obtener los usuarios:", error);
+                toast.error("Error al obtener los usuarios.");
             })
             .finally(() => {
                 setCargando(false);

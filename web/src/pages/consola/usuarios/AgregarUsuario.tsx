@@ -101,6 +101,7 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
                 </div>
                 <div className="modal-acciones">
                     <button type="submit">Agregar</button>
+                    <button onClick={() => cerrarModal(false)}>Cancelar</button>
                 </div>
             </form>
         </OverlayCarga>

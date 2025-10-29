@@ -103,6 +103,7 @@ export function ModificarUsuarioModal({ modalAbierto, cerrarModal, usuario }: Pr
                 </div>
                 <div className="modal-acciones">
                     <button type="submit">Guardar</button>
+                    <button onClick={() => cerrarModal(false)}>Cancelar</button>
                 </div>
             </form>
         </OverlayCarga>
