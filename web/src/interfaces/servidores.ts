@@ -2,7 +2,8 @@ export interface IServidor {
     id: number;
     nombre: string;
     descripcion: string;
-    proyecto: string;
+    id_proyecto: number;
+    nombre_proyecto: string;
 }
 
 export interface IServidoresResponse {

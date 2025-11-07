@@ -3,9 +3,9 @@ import type { IServidoresResponse, IServidor } from "@/interfaces/servidores";
 import type { IProyectosListaResponse } from "@/interfaces/proyectos";
 import { obtenerServidores } from "@/api/servidores";
 import { obtenerListaProyectos } from "@/api/proyectos";
-// import { AgregarProyectoModal } from "./AgregarProyecto";
-// import { ModificarProyectoModal } from "./ModificarProyecto";
-// import { DeshabilitarProyectoModal } from "./DeshabilitarProyecto";
+import { AgregarServidorModal } from "./AgregarServidor";
+import { ModificarServidorModal } from "./ModificarServidor";
+import { DeshabilitarServidorModal } from "./DeshabilitarServidor";
 import { OverlayCarga } from "@/components/overlay-carga";
 import { PaginacionFooter } from "@/components/paginacion-footer";
 import { toast } from "@/common/toast";
@@ -111,7 +111,7 @@ export function ServidoresPage() {
                                     <tr key={servidor.id}>
                                         <td>{servidor.nombre}</td>
                                         <td>{servidor.descripcion}</td>
-                                        <td>{servidor.proyecto}</td>
+                                        <td>{servidor.nombre_proyecto}</td>
                                         <td>
                                             <button onClick={() => {
                                                 setServidorSeleccionado(servidor);
@@ -145,7 +145,7 @@ export function ServidoresPage() {
                 onPaginaChange={(nuevaPagina) => setPaginacion({ ...paginacion, index: nuevaPagina })}
                 cargando={cargando}
             />
-            {/* <AgregarServidorModal
+            <AgregarServidorModal
                 modalAbierto={modalAgregarServidorAbierto}
                 cerrarModal={(recargar) => {
                     setModalAgregarServidorAbierto(false);
@@ -153,7 +153,10 @@ export function ServidoresPage() {
                         setPaginacion({ ...paginacion, index: 1 });
                     }
                 }}
+                listaProyectos={proyectos.items}
             />
+           
+
             <DeshabilitarServidorModal
                 modalAbierto={modalDeshabilitarServidorAbierto}
                 cerrarModal={(recargar) => {
@@ -173,7 +176,8 @@ export function ServidoresPage() {
                     }
                 }}
                 servidor={servidorSeleccionado}
-            /> */}
+                listaProyectos={proyectos.items}
+            /> 
         </>
     );
 }

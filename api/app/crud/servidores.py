@@ -3,14 +3,15 @@ from datetime import datetime
 from app.common import sql
 from app.maestros import ESTADOS
 
-def obtener_servidores_con_paginacion(bd_conexion: Connection, pagina_index: int, pagina_size: int, texto_busqueda: str):
+def obtener_servidores_con_paginacion(bd_conexion: Connection, pagina_index: int, pagina_size: int, texto_busqueda: str, id_proyecto: int | None):
     cursor = bd_conexion.cursor()
     query_base = """
         SELECT {columnas}
         FROM servidor s
         LEFT JOIN proyecto p
             ON p.id_proyecto = s.id_proyecto
-        WHERE p.id_estado = :id_estado
+        WHERE s.id_estado = :id_estado
+        AND s.id_proyecto = NVL(:id_proyecto, s.id_proyecto)
         AND (
             s.nombre COLLATE BINARY_AI LIKE '%' || :texto_busqueda || '%'
             OR s.descripcion COLLATE BINARY_AI LIKE '%' || :texto_busqueda || '%'
@@ -18,7 +19,7 @@ def obtener_servidores_con_paginacion(bd_conexion: Connection, pagina_index: int
     """
     # obtener los servidores con paginación
     query_con_paginacion = sql.obtener_query_paginacion(
-        query_base.replace("{columnas}", "s.id_servidor, s.nombre, s.descripcion, p.nombre AS proyecto"),
+        query_base.replace("{columnas}", "s.id_servidor, s.nombre, s.descripcion, p.id_proyecto AS id_proyecto, p.nombre AS nombre_proyecto"),
         "s.nombre",
         "ASC",
         pagina_index,
@@ -26,7 +27,8 @@ def obtener_servidores_con_paginacion(bd_conexion: Connection, pagina_index: int
     )
     query_vars = {
         "id_estado": ESTADOS.ACTIVO,
-        "texto_busqueda": texto_busqueda
+        "texto_busqueda": texto_busqueda,
+        "id_proyecto": id_proyecto
     }
     cursor.execute(query_con_paginacion, query_vars)
     resultado_items = cursor.fetchall()
@@ -81,7 +83,8 @@ def modificar_servidor(bd_conexion: Connection, id_servidor: int, nombre: str, d
         "nombre": nombre,
         "descripcion": descripcion,
         "id_proyecto": id_proyecto,
-        "fecha_actualizacion": datetime.now()
+        "fecha_actualizacion": datetime.now(),
+        "id_servidor": id_servidor
     }
     cursor.execute(query, query_vars)
     cursor.close()

@@ -21,7 +21,8 @@ def obtener_servidores():
         g.bd_conexion,
         pagina_index,
         pagina_size,
-        texto_busqueda
+        texto_busqueda,
+        None
     )
     # Formatear resultados
     items = []
@@ -30,7 +31,8 @@ def obtener_servidores():
             "id": fila[0],
             "nombre": fila[1],
             "descripcion": fila[2],
-            "proyecto": fila[3],
+            "id_proyecto": fila[3],
+            "nombre_proyecto": fila[4],
         })
     return {"items": items, "total": total}, 200
 
