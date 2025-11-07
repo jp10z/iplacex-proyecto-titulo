@@ -23,7 +23,7 @@ export function ServidoresPage() {
     const [proyectoSeleccionadoId, setProyectoSeleccionadoId] = useState<number | undefined>(undefined);
 
     function cargarServidores() {
-        obtenerServidores(paginacion.index, paginacion.size, textoBusqueda)
+        obtenerServidores(paginacion.index, paginacion.size, textoBusqueda, proyectoSeleccionadoId)
             .then((response) => {
                 setServidores(response.data);
             })
@@ -54,7 +54,7 @@ export function ServidoresPage() {
     useEffect(() => {
         // Cargar lista de proyectos y servidores cuando se ingresa a la página
         cargarListaProyectos();
-    }, [paginacion]);
+    }, [paginacion, proyectoSeleccionadoId]);
 
     return (
         <>

@@ -3,8 +3,8 @@ import type { IServidoresResponse } from "@/interfaces/servidores";
 
 const BASE_URL = "http://localhost:5000/api";
 
-export async function obtenerServidores(paginaIndex: number, paginaSize: number, textoBusqueda: string) {
-    return await axios.get<IServidoresResponse>(`${BASE_URL}/servidores?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}`);
+export async function obtenerServidores(paginaIndex: number, paginaSize: number, textoBusqueda: string, idProyecto?: number) {
+    return await axios.get<IServidoresResponse>(`${BASE_URL}/servidores?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}&idProyecto=${idProyecto || ""}`);
 }
 
 export async function agregarServidor(nombre: string, descripcion: string, idProyecto: number) {

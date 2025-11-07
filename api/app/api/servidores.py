@@ -15,6 +15,8 @@ def obtener_servidores():
     texto_busqueda = request.args.get("buscar", "").strip()
     pagina_index = int(request.args.get("paginaIndex", "1"))
     pagina_size = int(request.args.get("paginaSize", "10"))
+    id_proyecto = request.args.get("idProyecto", "")
+    id_proyecto = int(id_proyecto) if id_proyecto else None
     logger.debug(f"Buscando servidores con texto: '{texto_busqueda}'")
     # Obtener servidores desde la BD
     servidores, total = crud_servidores.obtener_servidores_con_paginacion(
@@ -22,7 +24,7 @@ def obtener_servidores():
         pagina_index,
         pagina_size,
         texto_busqueda,
-        None
+        id_proyecto
     )
     # Formatear resultados
     items = []
