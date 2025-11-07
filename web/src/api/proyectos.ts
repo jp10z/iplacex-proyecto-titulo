@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { IProyectosResponse } from "@/interfaces/proyectos";
+import type { IProyectosResponse, IProyectosListaResponse } from "@/interfaces/proyectos";
 
 const BASE_URL = "http://localhost:5000/api";
 
@@ -25,4 +25,8 @@ export async function modificarProyecto(id: number, nombre: string, descripcion:
 
 export async function deshabilitarProyecto(id: number) {
     return await axios.delete(`${BASE_URL}/proyectos/${id}`);
+}
+
+export async function obtenerListaProyectos() {
+    return await axios.get<IProyectosListaResponse>(`${BASE_URL}/proyectos/lista`);
 }

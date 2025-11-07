@@ -83,3 +83,19 @@ def deshabilitar_proyecto(id_proyecto: int):
     crud_proyectos.actualizar_estado_proyecto(bd_conexion, id_proyecto, ESTADOS.INACTIVO)
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Proyecto deshabilitado correctamente"}, 200
+
+@api.route("lista", methods=["GET"])
+def obtener_lista_proyectos():
+    logger.info("Obteniendo lista de proyectos")
+    # obtener conexión a la BD
+    bd_conexion: Connection = g.bd_conexion
+    # obtener proyectos desde la BD (formato lista)
+    proyectos = crud_proyectos.obtener_lista_proyectos(bd_conexion)
+    # formatear resultados
+    items = []
+    for fila in proyectos:
+        items.append({
+            "id_proyecto": fila[0],
+            "nombre": fila[1],
+        })
+    return {"items": items}, 200
