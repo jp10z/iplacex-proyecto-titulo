@@ -24,6 +24,30 @@ def obtener_estados_servidores(bd_conexion: Connection, id_proyecto: int):
     cursor.close()
     return resultado_items
 
+def obtener_detalles_acceso_servidor(bd_conexion: Connection, id_servidor: int):
+    cursor = bd_conexion.cursor()
+    query = """
+        SELECT
+            s.id_servidor, s.nombre AS nombre_servidor, s.descripcion AS descripcion_servidor,
+            p.nombre AS nombre_proyecto, sa.fecha_acceso, sa.duracion_minutos, sa.notas,
+            u.id_usuario, u.nombre AS nombre_usuario
+        FROM servidor s
+        LEFT JOIN proyecto p
+            ON s.id_proyecto = p.id_proyecto
+        LEFT JOIN servidor_acceso sa
+            ON s.id_servidor = sa.id_servidor
+        LEFT JOIN usuario u
+            ON sa.id_usuario = u.id_usuario
+        WHERE s.id_servidor = :id_servidor
+    """
+    query_vars = {
+        "id_servidor": id_servidor
+    }
+    cursor.execute(query, query_vars)
+    resultado = cursor.fetchone()
+    cursor.close()
+    return resultado
+
 def agregar_acceso(bd_conexion: Connection, id_servidor: int, id_usuario: int, duracion_minutos: int, notas: str):
     cursor = bd_conexion.cursor()
     # obtener servidor_acceso del servidor

@@ -4,8 +4,7 @@ import type { IProyectosListaResponse } from "@/interfaces/proyectos";
 import { obtenerEstadosServidores } from "@/api/dashboard";
 import { obtenerListaProyectos } from "@/api/proyectos";
 import { AgregarAccesoModal } from "./AgregarAcceso";
-// import { ModificarServidorModal } from "./ModificarServidor";
-// import { DeshabilitarServidorModal } from "./DeshabilitarServidor";
+import { DetallesAccesoModal } from "./DetallesAcceso";
 import { OverlayCarga } from "@/components/overlay-carga";
 import { toast } from "@/common/toast";
 
@@ -17,8 +16,7 @@ export function DashboardPage() {
     const [servidores, setServidores] = useState<IDashboardEstadosResponse>({ items: [] });
     const [proyectos, setProyectos] = useState<IProyectosListaResponse>({ items: [] });
     const [modalAgregarAccesoAbierto, setModalAgregarAccesoAbierto] = useState(false);
-    // const [modalModificarServidorAbierto, setModalModificarServidorAbierto] = useState(false);
-    // const [modalDeshabilitarServidorAbierto, setModalDeshabilitarServidorAbierto] = useState(false);
+    const [modalDetallesAccesoAbierto, setModalDetallesAccesoAbierto] = useState(false);
     const [servidorSeleccionado, setServidorSeleccionado] = useState<IServidorEstado | undefined>(undefined);
     const [proyectoSeleccionadoId, setProyectoSeleccionadoId] = useState<number | undefined>(undefined);
     const [servidoresFiltrados, setServidoresFiltrados] = useState<IServidorEstado[]>([]);
@@ -219,7 +217,10 @@ export function DashboardPage() {
                                             <td>{servidor.nombre_proyecto}</td>
                                             <td>
                                                 {estado === 'ocupado' && (
-                                                    <button>Ver detalles</button>
+                                                    <button onClick={() => {
+                                                        setModalDetallesAccesoAbierto(true);
+                                                        setServidorSeleccionado(servidor);
+                                                    }}>Ver detalles</button>
                                                 )}
                                                 {estado === 'disponible' && (
                                                     <button onClick={
@@ -260,6 +261,11 @@ export function DashboardPage() {
                     setModalAgregarAccesoAbierto(false);
                     if (recargar) setForzarRecargaServidores(!forzarRecargaServidores);
                 }}
+                servidor={servidorSeleccionado}
+            />
+            <DetallesAccesoModal
+                modalAbierto={modalDetallesAccesoAbierto}
+                cerrarModal={() => setModalDetallesAccesoAbierto(false)}
                 servidor={servidorSeleccionado}
             />
         </>

@@ -28,6 +28,30 @@ def obtener_estados_servidores(id_proyecto: int):
         })
     return {"items": items}, 200
 
+@api.route("/detalles/<int:id_servidor>", methods=["GET"])
+def obtener_detalles_acceso_servidor(id_servidor: int):
+    logger.info(f"Obteniendo detalles de acceso del servidor {id_servidor} desde la BD")
+    # Obtener detalles desde la BD
+    detalles = crud_dashboard.obtener_detalles_acceso_servidor(
+        g.bd_conexion,
+        id_servidor
+    )
+    if detalles is None:
+        return {"status": "error", "mensaje": "Servidor no encontrado"}, 404
+    # Formatear resultado
+    item = {
+        "id_servidor": detalles[0],
+        "nombre_servidor": detalles[1],
+        "descripcion_servidor": detalles[2],
+        "nombre_proyecto": detalles[3],
+        "fecha_acceso": detalles[4].isoformat() if detalles[4] else None,
+        "duracion_minutos": detalles[5],
+        "notas": detalles[6],
+        "id_usuario": detalles[7],
+        "nombre_usuario": detalles[8],
+    }
+    return {"item": item}, 200
+
 @api.route("/acceso", methods=["POST"])
 def agregar_acceso():
     logger.info("Agregar acceso a servidor")

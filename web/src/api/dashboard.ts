@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { IDashboardEstadosResponse } from "@/interfaces/dashboard";
+import type { IDashboardEstadosResponse, IServidorEstadoDetallesResponse } from "@/interfaces/dashboard";
 
 const BASE_URL = "http://localhost:5000/api";
 
@@ -15,4 +15,8 @@ export async function agregarAccesoServidor(idServidor: number, idUsuario: numbe
         notas: notas
     }
     return await axios.post(`${BASE_URL}/dashboard/acceso`, payload);
+}
+
+export async function obtenerDetallesAccesoServidor(idServidor: number) {
+    return await axios.get<IServidorEstadoDetallesResponse>(`${BASE_URL}/dashboard/detalles/${idServidor}`);
 }
