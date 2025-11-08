@@ -1,4 +1,4 @@
-from oracledb import Connection
+from oracledb import Connection, NUMBER
 from datetime import datetime
 from app.common import sql
 from app.maestros import ESTADOS
@@ -43,8 +43,10 @@ def obtener_servidores_con_paginacion(bd_conexion: Connection, pagina_index: int
 def obtener_servidor_por_nombre(bd_conexion: Connection, nombre: str):
     cursor = bd_conexion.cursor()
     query = """
-        SELECT s.id_servidor, s.nombre, s.descripcion
+        SELECT s.id_servidor, s.nombre, s.descripcion, p.id_proyecto, p.nombre AS nombre_proyecto
         FROM servidor s
+        LEFT JOIN proyecto p
+            ON p.id_proyecto = s.id_proyecto
         WHERE s.nombre = :nombre
         AND s.id_estado = :id_estado
     """
@@ -57,20 +59,43 @@ def obtener_servidor_por_nombre(bd_conexion: Connection, nombre: str):
     cursor.close()
     return resultado
 
+def obtener_servidor_por_id(bd_conexion: Connection, id_servidor: int):
+    cursor = bd_conexion.cursor()
+    query = """
+        SELECT s.id_servidor, s.nombre, s.descripcion, p.id_proyecto, p.nombre AS nombre_proyecto
+        FROM servidor s
+        LEFT JOIN proyecto p
+            ON p.id_proyecto = s.id_proyecto
+        WHERE s.id_servidor = :id_servidor
+        AND s.id_estado = :id_estado
+    """
+    query_vars = {
+        "id_servidor": id_servidor,
+        "id_estado": ESTADOS.ACTIVO
+    }
+    cursor.execute(query, query_vars)
+    resultado = cursor.fetchone()
+    cursor.close()
+    return resultado
+
 def agregar_servidor(bd_conexion: Connection, nombre: str, descripcion: str, id_proyecto: int):
     cursor = bd_conexion.cursor()
     query = """
         INSERT INTO servidor (nombre, descripcion, id_proyecto, id_estado)
         VALUES (:nombre, :descripcion, :id_proyecto, :id_estado)
+        RETURNING id_servidor INTO :id_servidor
     """
+    id_servidor = cursor.var(NUMBER)
     query_vars = {
         "nombre": nombre,
         "descripcion": descripcion,
         "id_proyecto": id_proyecto,
-        "id_estado": ESTADOS.ACTIVO
+        "id_estado": ESTADOS.ACTIVO,
+        "id_servidor": id_servidor
     }
     cursor.execute(query, query_vars)
     cursor.close()
+    return id_servidor.getvalue()[0]
 
 def modificar_servidor(bd_conexion: Connection, id_servidor: int, nombre: str, descripcion: str, id_proyecto: int):
     cursor = bd_conexion.cursor()

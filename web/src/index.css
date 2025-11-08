@@ -88,3 +88,11 @@ form input, form select {
     width: 100%;
     box-sizing: border-box;
 }
+
+/* json */
+
+.json {
+    background-color: #DDDDDD;
+    padding: 8px;
+    border: solid #000000 1px;
+}

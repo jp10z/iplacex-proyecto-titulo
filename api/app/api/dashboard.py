@@ -1,8 +1,10 @@
 import logging
 from flask import Blueprint, g, request
 from oracledb import Connection
-from app.maestros import ESTADOS
+from app.maestros import TIPOS_EVENTO
 from app.crud import dashboard as crud_dashboard
+from app.crud import servidores as crud_servidores
+from app.crud import eventos as crud_eventos
 
 api = Blueprint("dashboard", __name__, url_prefix="/api/dashboard")
 
@@ -65,7 +67,25 @@ def agregar_acceso():
     notas: str = datos.get("notas", "").strip()
     # obtener conexión a la BD
     bd_conexion: Connection = g.bd_conexion
+    # obtener servidor
+    servidor = crud_servidores.obtener_servidor_por_id(bd_conexion, id_servidor)
+    if servidor is None:
+        return {"status": "error", "mensaje": "El servidor no existe"}, 422
     # insertar o actualizar acceso en la BD
     crud_dashboard.agregar_acceso(bd_conexion, id_servidor, id_usuario, duracion_minutos, notas)
+    crud_eventos.agregar_evento(
+        bd_conexion,
+        TIPOS_EVENTO.SERVIDOR_ACCESO,
+        id_usuario,
+        id_servidor,
+        f"Acceso al servidor por {duracion_minutos} minutos",
+        {
+            "id_servidor": id_servidor,
+            "id_usuario": id_usuario,
+            "duracion_minutos": duracion_minutos,
+            "notas": notas,
+            "nombre_servidor": servidor[1],
+        }
+    )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Acceso configurado correctamente"}, 201

@@ -2,8 +2,9 @@ import logging
 from flask import Blueprint, g, request
 from oracledb import Connection
 from app.common import contrasenias
-from app.maestros import ESTADOS, ROLES
+from app.maestros import ESTADOS, ROLES, TIPOS_EVENTO
 from app.crud import usuarios as crud_usuarios
+from app.crud import eventos as crud_eventos
 
 api = Blueprint("usuarios", __name__, url_prefix="/api/usuarios")
 
@@ -61,7 +62,20 @@ def agregar_usuario():
     if usuario_existente is not None:
         return {"status": "error", "mensaje": "El correo ya está en uso"}, 422
     # insertar en la BD
-    crud_usuarios.agregar_usuario(bd_conexion, correo, nombre, hash_contrasenia, id_rol)
+    id_usuario = crud_usuarios.agregar_usuario(bd_conexion, correo, nombre, hash_contrasenia, id_rol)
+    crud_eventos.agregar_evento(
+        bd_conexion,
+        TIPOS_EVENTO.USUARIO_AGREGAR,
+        None,
+        None,
+        f"Usuario agregado: {nombre}",
+        {
+            "id_usuario": id_usuario,
+            "correo": correo,
+            "nombre": nombre,
+            "rol": rol
+        }
+    )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Usuario agregado correctamente"}, 201
 
@@ -90,6 +104,27 @@ def modificar_usuario(id_usuario: int):
         return {"status": "error", "mensaje": "El correo ya está en uso"}, 422
     # actualizar usuario en la BD
     crud_usuarios.modificar_usuario(bd_conexion, id_usuario, correo, nombre, id_rol, contrasenia)
+    crud_eventos.agregar_evento(
+        bd_conexion,
+        TIPOS_EVENTO.USUARIO_MODIFICAR,
+        None,
+        None,
+        f"Usuario modificado: {nombre}",
+        {
+            "id_usuario": id_usuario,
+            "contraseña_modificada": contrasenia is not None,
+            "datos_anteriores": {
+                "correo": usuario_existente[1],
+                "nombre": usuario_existente[2],
+                "rol": usuario_existente[3],
+            },
+            "datos_nuevos": {
+                "correo": correo,
+                "nombre": nombre,
+                "rol": rol
+            }
+        }
+    )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Usuario modificado correctamente"}, 200
 
@@ -98,7 +133,22 @@ def deshabilitar_usuario(id_usuario: int):
     logger.info(f"Deshabilitando usuario {id_usuario}")
     # obtener conexión a la BD
     bd_conexion: Connection = g.bd_conexion
+    # obtener datos del usuario antes de deshabilitar
+    usuario = crud_usuarios.obtener_usuario_por_id(bd_conexion, id_usuario)
     # actualizar estado del usuario
     crud_usuarios.actualizar_estado_usuario(bd_conexion, id_usuario, ESTADOS.INACTIVO)
+    crud_eventos.agregar_evento(
+        bd_conexion,
+        TIPOS_EVENTO.USUARIO_DESHABILITAR,
+        None,
+        None,
+        f"Usuario deshabilitado: {usuario[2]}",
+        {
+            "id_usuario": id_usuario,
+            "correo": usuario[1],
+            "nombre": usuario[2],
+            "rol": usuario[3]
+        }
+    )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Usuario deshabilitado correctamente"}, 200

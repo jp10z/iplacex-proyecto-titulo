@@ -1,4 +1,4 @@
-from oracledb import Connection
+from oracledb import Connection, NUMBER
 from datetime import datetime
 from app.common import sql
 from app.maestros import ESTADOS
@@ -56,21 +56,44 @@ def obtener_usuario_por_correo(bd_conexion: Connection, correo: str):
     cursor.close()
     return resultado
 
+def obtener_usuario_por_id(bd_conexion: Connection, id_usuario: int):
+    cursor = bd_conexion.cursor()
+    query = """
+        SELECT u.id_usuario, u.correo, u.nombre, r.nombre AS rol
+        FROM usuario u
+        INNER JOIN rol r
+            ON u.id_rol = r.id_rol
+        WHERE u.id_usuario = :id_usuario
+        AND u.id_estado = :id_estado
+    """
+    query_vars = {
+        "id_usuario": id_usuario,
+        "id_estado": ESTADOS.ACTIVO
+    }
+    cursor.execute(query, query_vars)
+    resultado = cursor.fetchone()
+    cursor.close()
+    return resultado
+
 def agregar_usuario(bd_conexion: Connection, correo: str, nombre: str, hash_contrasenia: str, id_rol: int):
     cursor = bd_conexion.cursor()
     query = """
         INSERT INTO usuario (correo, nombre, contrasenia, id_rol, id_estado)
         VALUES (:correo, :nombre, :contrasenia, :id_rol, :id_estado)
+        RETURNING id_usuario INTO :id_usuario
     """
+    id_usuario = cursor.var(NUMBER)
     query_vars = {
         "correo": correo,
         "nombre": nombre,
         "contrasenia": hash_contrasenia,
         "id_rol": id_rol,
-        "id_estado": ESTADOS.ACTIVO
+        "id_estado": ESTADOS.ACTIVO,
+        "id_usuario": id_usuario
     }
     cursor.execute(query, query_vars)
     cursor.close()
+    return id_usuario.getvalue()[0]
 
 def modificar_usuario(bd_conexion: Connection, id_usuario: int, correo: str, nombre: str, id_rol: int, contrasenia: str | None = None):
     cursor = bd_conexion.cursor()

@@ -1,8 +1,9 @@
 import logging
 from flask import Blueprint, g, request
 from oracledb import Connection
-from app.maestros import ESTADOS
+from app.maestros import ESTADOS, TIPOS_EVENTO
 from app.crud import proyectos as crud_proyectos
+from app.crud import eventos as crud_eventos
 
 api = Blueprint("proyectos", __name__, url_prefix="/api/proyectos")
 
@@ -50,7 +51,19 @@ def agregar_proyecto():
     if proyecto_existente is not None:
         return {"status": "error", "mensaje": "El nombre ya está en uso"}, 422
     # insertar en la BD
-    crud_proyectos.agregar_proyecto(bd_conexion, nombre, descripcion)
+    id_proyecto = crud_proyectos.agregar_proyecto(bd_conexion, nombre, descripcion)
+    crud_eventos.agregar_evento(
+        bd_conexion,
+        TIPOS_EVENTO.PROYECTO_AGREGAR,
+        None,
+        None,
+        f"Proyecto agregado: {nombre}",
+        {
+            "id_proyecto": id_proyecto,
+            "nombre": nombre,
+            "descripcion": descripcion
+        }
+    )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Proyecto agregado correctamente"}, 201
 
@@ -71,6 +84,24 @@ def modificar_proyecto(id_proyecto: int):
         return {"status": "error", "mensaje": "El nombre ya está en uso por otro proyecto"}, 422
     # actualizar proyecto en la BD
     crud_proyectos.modificar_proyecto(bd_conexion, id_proyecto, nombre, descripcion)
+    crud_eventos.agregar_evento(
+        bd_conexion,
+        TIPOS_EVENTO.PROYECTO_MODIFICAR,
+        None,
+        None,
+        f"Proyecto modificado: {nombre}",
+        {
+            "id_proyecto": id_proyecto,
+            "datos_anteriores": {
+                "nombre": proyecto_existente[1],
+                "descripcion": proyecto_existente[2]
+            },
+            "datos_nuevos": {
+                "nombre": nombre,
+                "descripcion": descripcion
+            }
+        }
+    )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Proyecto modificado correctamente"}, 200
 
@@ -79,8 +110,21 @@ def deshabilitar_proyecto(id_proyecto: int):
     logger.info(f"Deshabilitando proyecto {id_proyecto}")
     # obtener conexión a la BD
     bd_conexion: Connection = g.bd_conexion
+    proyecto = crud_proyectos.obtener_proyecto_por_id(bd_conexion, id_proyecto)
     # actualizar estado del proyecto
     crud_proyectos.actualizar_estado_proyecto(bd_conexion, id_proyecto, ESTADOS.INACTIVO)
+    crud_eventos.agregar_evento(
+        bd_conexion,
+        TIPOS_EVENTO.PROYECTO_DESHABILITAR,
+        None,
+        None,
+        f"Proyecto deshabilitado: {proyecto[1]}",
+        {
+            "id_proyecto": id_proyecto,
+            "nombre": proyecto[1],
+            "descripcion": proyecto[2]
+        }
+    )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Proyecto deshabilitado correctamente"}, 200
 

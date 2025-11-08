@@ -1,4 +1,4 @@
-from oracledb import Connection
+from oracledb import Connection, NUMBER
 from datetime import datetime
 from app.common import sql
 from app.maestros import ESTADOS
@@ -56,19 +56,40 @@ def obtener_proyecto_por_nombre(bd_conexion: Connection, nombre: str):
     cursor.close()
     return resultado
 
+def obtener_proyecto_por_id(bd_conexion: Connection, id_proyecto: int):
+    cursor = bd_conexion.cursor()
+    query = """
+        SELECT p.id_proyecto, p.nombre, p.descripcion
+        FROM proyecto p
+        WHERE p.id_proyecto = :id_proyecto
+        AND p.id_estado = :id_estado
+    """
+    query_vars = {
+        "id_proyecto": id_proyecto,
+        "id_estado": ESTADOS.ACTIVO
+    }
+    cursor.execute(query, query_vars)
+    resultado = cursor.fetchone()
+    cursor.close()
+    return resultado
+
 def agregar_proyecto(bd_conexion: Connection, nombre: str, descripcion: str):
     cursor = bd_conexion.cursor()
     query = """
         INSERT INTO proyecto (nombre, descripcion, id_estado)
         VALUES (:nombre, :descripcion, :id_estado)
+        RETURNING id_proyecto INTO :id_proyecto
     """
+    id_proyecto = cursor.var(NUMBER)
     query_vars = {
         "nombre": nombre,
         "descripcion": descripcion,
-        "id_estado": ESTADOS.ACTIVO
+        "id_estado": ESTADOS.ACTIVO,
+        "id_proyecto": id_proyecto
     }
     cursor.execute(query, query_vars)
     cursor.close()
+    return id_proyecto.getvalue()[0]
 
 def modificar_proyecto(bd_conexion: Connection, id_proyecto: int, nombre: str, descripcion: str):
     cursor = bd_conexion.cursor()

@@ -110,6 +110,7 @@ CREATE TABLE evento (
     id_usuario NUMBER(10) NOT NULL,
     id_servidor NUMBER(10),
     detalle VARCHAR2(500) NOT NULL,
+    datos VARCHAR2(2000),
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_evento PRIMARY KEY (id_evento),

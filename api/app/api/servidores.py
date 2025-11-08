@@ -1,8 +1,10 @@
 import logging
 from flask import Blueprint, g, request
 from oracledb import Connection
-from app.maestros import ESTADOS
+from app.maestros import ESTADOS, TIPOS_EVENTO
 from app.crud import servidores as crud_servidores
+from app.crud import proyectos as crud_proyectos
+from app.crud import eventos as crud_eventos
 
 api = Blueprint("servidores", __name__, url_prefix="/api/servidores")
 
@@ -54,8 +56,26 @@ def agregar_servidor():
     servidor_existente = crud_servidores.obtener_servidor_por_nombre(bd_conexion, nombre)
     if servidor_existente is not None:
         return {"status": "error", "mensaje": "El nombre ya está en uso"}, 422
+    # proyecto
+    proyecto = crud_proyectos.obtener_proyecto_por_id(bd_conexion, id_proyecto)
+    if proyecto is None:
+        return {"status": "error", "mensaje": "El proyecto no existe"}, 422
     # insertar en la BD
-    crud_servidores.agregar_servidor(bd_conexion, nombre, descripcion, id_proyecto)
+    id_servidor = crud_servidores.agregar_servidor(bd_conexion, nombre, descripcion, id_proyecto)
+    crud_eventos.agregar_evento(
+        bd_conexion,
+        TIPOS_EVENTO.SERVIDOR_AGREGAR,
+        None,
+        id_servidor,
+        f"Servidor agregado: {nombre}",
+        {
+            "id_servidor": id_servidor,
+            "nombre": nombre,
+            "descripcion": descripcion,
+            "id_proyecto": id_proyecto,
+            "nombre_proyecto": proyecto[1],
+        }
+    )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Servidor agregado correctamente"}, 201
 
@@ -75,8 +95,34 @@ def modificar_servidor(id_servidor: int):
     servidor_existente = crud_servidores.obtener_servidor_por_nombre(bd_conexion, nombre)
     if servidor_existente is not None and servidor_existente[0] != id_servidor:
         return {"status": "error", "mensaje": "El nombre ya está en uso por otro servidor"}, 422
+    # proyecto
+    proyecto = crud_proyectos.obtener_proyecto_por_id(bd_conexion, id_proyecto)
+    if proyecto is None:
+        return {"status": "error", "mensaje": "El proyecto no existe"}, 422
     # actualizar servidor en la BD
     crud_servidores.modificar_servidor(bd_conexion, id_servidor, nombre, descripcion, id_proyecto)
+    crud_eventos.agregar_evento(
+        bd_conexion,
+        TIPOS_EVENTO.SERVIDOR_MODIFICAR,
+        None,
+        id_servidor,
+        f"Servidor modificado: {nombre}",
+        {
+            "id_servidor": id_servidor,
+            "datos_anteriores": {
+                "nombre": servidor_existente[1],
+                "descripcion": servidor_existente[2],
+                "id_proyecto": servidor_existente[3],
+                "nombre_proyecto": servidor_existente[4],
+            },
+            "datos_nuevos": {
+                "nombre": nombre,
+                "descripcion": descripcion,
+                "id_proyecto": id_proyecto,
+                "nombre_proyecto": proyecto[1],
+            }
+        }
+    )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Servidor modificado correctamente"}, 200
 
@@ -87,5 +133,20 @@ def deshabilitar_servidor(id_servidor: int):
     bd_conexion: Connection = g.bd_conexion
     # actualizar estado del servidor
     crud_servidores.actualizar_estado_servidor(bd_conexion, id_servidor, ESTADOS.INACTIVO)
+    servidor = crud_servidores.obtener_servidor_por_id(bd_conexion, id_servidor)
+    crud_eventos.agregar_evento(
+        bd_conexion,
+        TIPOS_EVENTO.SERVIDOR_DESHABILITAR,
+        None,
+        id_servidor,
+        f"Servidor deshabilitado: {servidor[1]}",
+        {
+            "id_servidor": id_servidor,
+            "nombre": servidor[1],
+            "descripcion": servidor[2],
+            "id_proyecto": servidor[3],
+            "nombre_proyecto": servidor[4],
+        }
+    )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Servidor deshabilitado correctamente"}, 200
