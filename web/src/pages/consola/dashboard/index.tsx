@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { IDashboardEstadosResponse, IServidorEstado } from "@/interfaces/dashboard";
 import type { IProyectosListaResponse } from "@/interfaces/proyectos";
 import { obtenerEstadosServidores } from "@/api/dashboard";
@@ -12,6 +12,7 @@ import { toast } from "@/common/toast";
 export function DashboardPage() {
     const [cargandoProyectos, setCargandoProyectos] = useState(true);
     const [cargandoServidores, setCargandoServidores] = useState(false);
+    const [primeraCargaServidores, setPrimeraCargaServidores] = useState(true);
     const [textoBusqueda, setTextoBusqueda] = useState("");
     const [servidores, setServidores] = useState<IDashboardEstadosResponse>({ items: [] });
     const [proyectos, setProyectos] = useState<IProyectosListaResponse>({ items: [] });
@@ -20,16 +21,16 @@ export function DashboardPage() {
     // const [modalDeshabilitarServidorAbierto, setModalDeshabilitarServidorAbierto] = useState(false);
     const [servidorSeleccionado, setServidorSeleccionado] = useState<IServidorEstado | undefined>(undefined);
     const [proyectoSeleccionadoId, setProyectoSeleccionadoId] = useState<number | undefined>(undefined);
+    const [servidoresFiltrados, setServidoresFiltrados] = useState<IServidorEstado[]>([]);
 
-    function cargarServidores() {
-        if (!proyectoSeleccionadoId) {
-            setCargandoServidores(false);
-            return;
-        };
+    const intervaloRef = useRef<number | undefined>(undefined);
+
+    function cargarServidores(idProyecto: number) {
         setCargandoServidores(true);
-        obtenerEstadosServidores(proyectoSeleccionadoId)
+        obtenerEstadosServidores(idProyecto)
             .then((response) => {
                 setServidores(response.data);
+                setPrimeraCargaServidores(false);
             })
             .catch((error) => {
                 console.error("Error al obtener los servidores:", error);
@@ -62,19 +63,11 @@ export function DashboardPage() {
                 minutosRestantes: null,
             };
         }
-
         // calculos de fechas/horas
         const fechaHoraActual = new Date();
         const fechaAcceso = new Date(servidor.fecha_acceso);
         const fechaCaducidadMinutos = fechaAcceso.getTime() + (servidor.duracion_minutos * 60 * 1000);
         const fechaCaducidad = new Date(fechaCaducidadMinutos);
-
-        console.log("Dep", {
-            fechaHoraActual,
-            fechaAcceso,
-            fechaCaducidad,
-        })
-
         // retornar disponible: si la fecha de caducidad es menor a la fecha/hora actual
         if (fechaCaducidad.getTime() < fechaHoraActual.getTime()) {
             return {
@@ -85,27 +78,74 @@ export function DashboardPage() {
         // retornar ocupado: con los minutos restantes
         const diferenciaMinutos = fechaCaducidad.getTime() - fechaHoraActual.getTime();
         const minutosRestantes = Math.ceil(diferenciaMinutos / (60 * 1000));
-
         return {
             estado: 'ocupado',
             minutosRestantes,
         };
+    }
 
+    function normalizarTexto(texto: string) {
+        // normaliza el texto para que al buscar no sea sensible a tildes ni mayusculas/minusculas
+        return texto.normalize?.('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+
+    function filtrarServidores() {
+        // Filtra los servidores según el texto de busqueda puesto
+        if (textoBusqueda.trim() === "") {
+            setServidoresFiltrados(servidores.items);
+            return;
+        }
+        const texto = normalizarTexto(textoBusqueda.trim());
+        const filtrados = servidores.items.filter(servidor =>
+            normalizarTexto(servidor.nombre ?? '').includes(texto)
+        );
+        setServidoresFiltrados(filtrados);
     }
 
     useEffect(() => {
         // Cargar lista de proyectos cuando se carga la pagina
         cargarListaProyectos();
+    }, []);
+
+    useEffect(() => {
+        // configurar la actualización automática de los servidores cada 20 segundos
+
+        // detener el intervalo si se seleccionó otro proyecto
+        if (intervaloRef.current !== undefined) {
+            clearInterval(intervaloRef.current);
+            intervaloRef.current = undefined;
+        }
+        // en caso de que no se haya seleccionado ningún proyecto
+        if (!proyectoSeleccionadoId) {
+            setServidores({ items: [] });
+            setCargandoServidores(false);
+            return;
+        }
+        // lo que se ejecutará cada x tiempo
+        const fetchData = () => cargarServidores(proyectoSeleccionadoId);
+        // ejecutar inmediatamente la primera vez
+        fetchData();
+        // configurar para que se ejecute cada 20 segundos
+        const id = setInterval(fetchData, 20000) as unknown as number;
+        intervaloRef.current = id;
+        // limpieza al salir o cambiar de proyecto
+        return () => {
+            if (intervaloRef.current !== undefined) {
+                clearInterval(intervaloRef.current);
+                intervaloRef.current = undefined;
+            }
+        };
+
     }, [proyectoSeleccionadoId]);
 
     useEffect(() => {
-        // Cargar servidores cuando se selecciona un proyecto
-        cargarServidores();
-    }, [proyectoSeleccionadoId]);
+        // Filtrar servidores cuando cambie el texto de búsqueda o la lista de servidores
+        filtrarServidores();
+    }, [textoBusqueda, servidores]);
 
     return (
         <>
-            <h1>Servidores</h1>
+            <h1>Dashboard</h1>
             <div className="contenedor-responsivo" style={{ marginTop: "4px", marginBottom: "8px" }}>
                 <select
                     className="item-auto"
@@ -117,6 +157,7 @@ export function DashboardPage() {
                         } else {
                             setProyectoSeleccionadoId(Number(valor));
                             setCargandoServidores(true);
+                            setPrimeraCargaServidores(true);
                         }
                     }}
                 >
@@ -151,7 +192,7 @@ export function DashboardPage() {
             {!cargandoProyectos && proyectoSeleccionadoId && (
             <div style={{ marginTop: "8px"}}>
                 <div className="tabla-contenedor">
-                    <OverlayCarga cargando={cargandoServidores}>
+                    <OverlayCarga cargando={cargandoServidores && primeraCargaServidores}>
                         <table className="tabla-datos">
                             <thead>
                                 <tr>
@@ -162,7 +203,7 @@ export function DashboardPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                    {servidores.items.length > 0 && servidores.items.map((servidor) => {
+                                    {servidoresFiltrados.length > 0 && servidoresFiltrados .map((servidor) => {
                                         const { estado, minutosRestantes } = obtenerEstado(servidor);
                                         return (
                                             <tr key={servidor.id}>
@@ -176,12 +217,21 @@ export function DashboardPage() {
                                             <td>{servidor.nombre}</td>
                                             <td>{servidor.nombre_proyecto}</td>
                                             <td>
-                                                <button>Modificar</button>
-                                                <button>Deshabilitar</button>
+                                                {estado === 'ocupado' && (
+                                                    <button>Ver detalles</button>
+                                                )}
+                                                {estado === 'disponible' && (
+                                                    <button>Reservar ahora</button>
+                                                )}
                                             </td>
                                         </tr>
                                         )
                                     })}
+                                    {!cargandoServidores && servidores.items.length !== 0 && servidoresFiltrados.length === 0 && (
+                                        <tr>
+                                            <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>No se encontraron servidores con el texto de busqueda.</td>
+                                        </tr>
+                                    )}
                                     {!cargandoServidores && servidores.items.length === 0 && (
                                         <tr>
                                             <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>No se encontraron servidores en el proyecto seleccionado.</td>
