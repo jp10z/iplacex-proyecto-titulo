@@ -3,7 +3,7 @@ import type { IDashboardEstadosResponse, IServidorEstado } from "@/interfaces/da
 import type { IProyectosListaResponse } from "@/interfaces/proyectos";
 import { obtenerEstadosServidores } from "@/api/dashboard";
 import { obtenerListaProyectos } from "@/api/proyectos";
-// import { AgregarServidorModal } from "./AgregarServidor";
+import { AgregarAccesoModal } from "./AgregarAcceso";
 // import { ModificarServidorModal } from "./ModificarServidor";
 // import { DeshabilitarServidorModal } from "./DeshabilitarServidor";
 import { OverlayCarga } from "@/components/overlay-carga";
@@ -16,12 +16,13 @@ export function DashboardPage() {
     const [textoBusqueda, setTextoBusqueda] = useState("");
     const [servidores, setServidores] = useState<IDashboardEstadosResponse>({ items: [] });
     const [proyectos, setProyectos] = useState<IProyectosListaResponse>({ items: [] });
-    // const [modalAgregarServidorAbierto, setModalAgregarServidorAbierto] = useState(false);
+    const [modalAgregarAccesoAbierto, setModalAgregarAccesoAbierto] = useState(false);
     // const [modalModificarServidorAbierto, setModalModificarServidorAbierto] = useState(false);
     // const [modalDeshabilitarServidorAbierto, setModalDeshabilitarServidorAbierto] = useState(false);
     const [servidorSeleccionado, setServidorSeleccionado] = useState<IServidorEstado | undefined>(undefined);
     const [proyectoSeleccionadoId, setProyectoSeleccionadoId] = useState<number | undefined>(undefined);
     const [servidoresFiltrados, setServidoresFiltrados] = useState<IServidorEstado[]>([]);
+    const [forzarRecargaServidores, setForzarRecargaServidores] = useState(false);
 
     const intervaloRef = useRef<number | undefined>(undefined);
 
@@ -136,7 +137,7 @@ export function DashboardPage() {
             }
         };
 
-    }, [proyectoSeleccionadoId]);
+    }, [proyectoSeleccionadoId, forzarRecargaServidores]);
 
     useEffect(() => {
         // Filtrar servidores cuando cambie el texto de búsqueda o la lista de servidores
@@ -209,7 +210,7 @@ export function DashboardPage() {
                                             <tr key={servidor.id}>
                                             <td>
                                                 {estado === 'ocupado' ? (
-                                                    <p>Ocupado ({minutosRestantes} minutos pendientes)</p>
+                                                    <p>Ocupado {minutosRestantes === 1 ? "(falta menos de un minuto)" : `(faltan ${minutosRestantes} minutos)`}</p>
                                                 ) : (
                                                     <p>Disponible</p>
                                                 )}
@@ -221,7 +222,12 @@ export function DashboardPage() {
                                                     <button>Ver detalles</button>
                                                 )}
                                                 {estado === 'disponible' && (
-                                                    <button>Reservar ahora</button>
+                                                    <button onClick={
+                                                        () => {
+                                                            setServidorSeleccionado(servidor);
+                                                            setModalAgregarAccesoAbierto(true);
+                                                        }
+                                                    }>Reservar ahora</button>
                                                 )}
                                             </td>
                                         </tr>
@@ -248,6 +254,14 @@ export function DashboardPage() {
                 </div>
             </div>
             )}
+            <AgregarAccesoModal
+                modalAbierto={modalAgregarAccesoAbierto}
+                cerrarModal={(recargar) => {
+                    setModalAgregarAccesoAbierto(false);
+                    if (recargar) setForzarRecargaServidores(!forzarRecargaServidores);
+                }}
+                servidor={servidorSeleccionado}
+            />
         </>
     );
 }
