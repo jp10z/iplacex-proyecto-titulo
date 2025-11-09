@@ -89,6 +89,8 @@ def modificar_usuario(id_usuario: int):
     correo: str = datos.get("correo", "").strip()
     nombre: str = datos.get("nombre", "").strip()
     contrasenia: str | None = datos.get("contrasenia", None)
+    # Se encripta la clave
+    hash_contrasenia = contrasenias.generar_hash_contrasenia(contrasenia) if contrasenia else None
     rol: str = datos.get("rol", "").strip()
     if rol == "ADMIN":
         id_rol = ROLES.ADMIN
@@ -103,7 +105,7 @@ def modificar_usuario(id_usuario: int):
     if usuario_existente is not None and usuario_existente[0] != id_usuario:
         return {"status": "error", "mensaje": "El correo ya está en uso"}, 422
     # actualizar usuario en la BD
-    crud_usuarios.modificar_usuario(bd_conexion, id_usuario, correo, nombre, id_rol, contrasenia)
+    crud_usuarios.modificar_usuario(bd_conexion, id_usuario, correo, nombre, id_rol, hash_contrasenia)
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.USUARIO_MODIFICAR,
