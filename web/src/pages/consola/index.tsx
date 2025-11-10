@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { DashboardPage } from "./dashboard";
 import { UsuariosPage } from "./usuarios";
 import { ProyectosPage } from "./proyectos";
@@ -6,6 +6,7 @@ import { ServidoresPage } from "./servidores";
 import { EventosPage } from "./eventos";
 import { ErrorPage404 } from "@/pages/error/404";
 import { Navbar } from "@/components/navbar";
+import { useSesion } from "@/context/SesionContext";
 
 const NAVBAR_LINKS = [
     { texto: "Dashboard", url: "/consola" },
@@ -18,6 +19,20 @@ const NAVBAR_LINKS = [
 ]
 
 export function ConsolaPage() {
+    const { datosSesion, autenticado, fetchingDatosSesion, clearSesion } = useSesion();
+    const navigate = useNavigate();
+
+    if (fetchingDatosSesion) {
+        return <div>Validando sesión...</div>;
+    }
+
+    if (!autenticado) {
+        navigate("/login");
+        return null;
+    }
+
+    console.log("Datos de sesión:", datosSesion);
+
     return (
         <>
         <Navbar links={NAVBAR_LINKS} />

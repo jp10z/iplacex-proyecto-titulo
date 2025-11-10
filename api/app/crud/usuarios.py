@@ -56,6 +56,38 @@ def obtener_usuario_por_correo(bd_conexion: Connection, correo: str):
     cursor.close()
     return resultado
 
+def obtener_datos_login_por_correo(bd_conexion: Connection, correo: str):
+    cursor = bd_conexion.cursor()
+    query = """
+        SELECT id_usuario, contrasenia
+        FROM usuario
+        WHERE correo = :correo
+        AND id_estado = :id_estado
+    """
+    query_vars = {
+        "correo": correo,
+        "id_estado": ESTADOS.ACTIVO
+    }
+    cursor.execute(query, query_vars)
+    resultado = cursor.fetchone()
+    cursor.close()
+    return resultado
+
+def obtener_estado_y_rol_usuario(bd_conexion: Connection, id_usuario: int):
+    cursor = bd_conexion.cursor()
+    query = """
+        SELECT u.id_estado, u.id_rol
+        FROM usuario u
+        WHERE u.id_usuario = :id_usuario
+    """
+    query_vars = {
+        "id_usuario": id_usuario
+    }
+    cursor.execute(query, query_vars)
+    resultado = cursor.fetchone()
+    cursor.close()
+    return resultado
+
 def obtener_usuario_por_id(bd_conexion: Connection, id_usuario: int):
     cursor = bd_conexion.cursor()
     query = """

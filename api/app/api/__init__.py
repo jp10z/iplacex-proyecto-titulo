@@ -5,6 +5,7 @@ from app.api.proyectos import api as proyectos_api
 from app.api.servidores import api as servidores_api
 from app.api.dashboard import api as dashboard_api
 from app.api.eventos import api as eventos_api
+from app.api.auth import api as auth_api
 
 logger = logging.getLogger(__name__)
 
@@ -15,3 +16,4 @@ def registrar_blueprints_api(app: Flask):
     app.register_blueprint(servidores_api)
     app.register_blueprint(dashboard_api)
     app.register_blueprint(eventos_api)
+    app.register_blueprint(auth_api)
