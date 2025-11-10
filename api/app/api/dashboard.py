@@ -64,10 +64,10 @@ def agregar_acceso():
     logger.info("Agregar acceso a servidor")
     # obtener datos desde la request
     datos: dict = request.get_json()
-    if not datos or "id_servidor" not in datos or "id_usuario" not in datos or "duracion_minutos" not in datos or "notas" not in datos:
+    if not datos or "id_servidor" not in datos or "duracion_minutos" not in datos or "notas" not in datos:
         return {"status": "error", "mensaje": "Debe completar todos los campos"}, 422
+    id_usuario: int = g.id_usuario
     id_servidor: int = datos.get("id_servidor", 0)
-    id_usuario: int = datos.get("id_usuario", 0)
     duracion_minutos: int = datos.get("duracion_minutos", 0)
     notas: str = datos.get("notas", "").strip()
     # obtener conexión a la BD

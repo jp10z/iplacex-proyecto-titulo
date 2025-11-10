@@ -25,9 +25,34 @@ def login_usuario():
     datos_login = crud_usuarios.obtener_datos_login_por_correo(bd_conexion, correo)
     if datos_login is None:
         logger.warning(f"Intento de login fallido para el correo (correo no existe): {correo}")
+        crud_eventos.agregar_evento(
+            bd_conexion,
+            TIPOS_EVENTO.LOGIN_FALLIDO,
+            None,
+            None,
+            f"Intento fallido de login para el correo: {correo}",
+            {
+                "correo": correo,
+                "motivo": "correo no existe"
+            }
+        )
+        bd_conexion.commit()
         return {"status": "error", "mensaje": "Correo o contraseña incorrectos"}, 401
     if not contrasenias.verificar_contrasenia(contrasenia, datos_login[1]):
         logger.warning(f"Intento de login fallido para el correo (contraseña incorrecta): {correo}")
+        crud_eventos.agregar_evento(
+            bd_conexion,
+            TIPOS_EVENTO.LOGIN_FALLIDO,
+            datos_login[0],
+            None,
+            f"Intento fallido de login para el correo: {correo}",
+            {
+                "id_usuario": datos_login[0],
+                "correo": correo,
+                "motivo": "contraseña incorrecta"
+            }
+        )
+        bd_conexion.commit()
         return {"status": "error", "mensaje": "Correo o contraseña incorrectos"}, 401
     # session
     sesion_token = sesion.crear_token(datos_login[0])

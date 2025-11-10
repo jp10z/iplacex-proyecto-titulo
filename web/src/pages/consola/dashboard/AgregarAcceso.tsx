@@ -9,10 +9,9 @@ type Props = {
     modalAbierto: boolean;
     cerrarModal: (recargar: boolean) => void;
     servidor?: IServidorEstado;
-    idUsuario?: number;
 }
 
-export function AgregarAccesoModal({ modalAbierto, cerrarModal, servidor, idUsuario }: Props) {
+export function AgregarAccesoModal({ modalAbierto, cerrarModal, servidor }: Props) {
     const [cargando, setCargando] = useState(false);
     const [duracionMinutos, setDuracionMinutos] = useState(0);
     const [notas, setNotas] = useState("");
@@ -25,8 +24,7 @@ export function AgregarAccesoModal({ modalAbierto, cerrarModal, servidor, idUsua
         if (servidor === undefined || servidor.id === undefined) return;
         console.log("Agregar acceso");
         setCargando(true);
-        const idUsuarioFinal = idUsuario || 4; // mientras tanto pongo el usuario en duro ya que aún no implemento el tema de autenticación
-        agregarAccesoServidor(servidor?.id, idUsuarioFinal, duracionMinutos, notas)
+        agregarAccesoServidor(servidor?.id, duracionMinutos, notas)
             .then((response) => {
                 console.log("Acceso agregado:", response.data);
                 toast.success("Acceso agregado", "El acceso ha sido agregado correctamente.");

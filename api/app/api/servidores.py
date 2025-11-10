@@ -68,7 +68,7 @@ def agregar_servidor():
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.SERVIDOR_AGREGAR,
-        None,
+        g.id_usuario,
         id_servidor,
         f"Servidor agregado: {nombre}",
         {
@@ -108,7 +108,7 @@ def modificar_servidor(id_servidor: int):
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.SERVIDOR_MODIFICAR,
-        None,
+        g.id_usuario,
         id_servidor,
         f"Servidor modificado: {nombre}",
         {
@@ -142,7 +142,7 @@ def deshabilitar_servidor(id_servidor: int):
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.SERVIDOR_DESHABILITAR,
-        None,
+        g.id_usuario,
         id_servidor,
         f"Servidor deshabilitado: {servidor[1]}",
         {

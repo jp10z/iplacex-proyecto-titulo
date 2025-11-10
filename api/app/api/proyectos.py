@@ -58,7 +58,7 @@ def agregar_proyecto():
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.PROYECTO_AGREGAR,
-        None,
+        g.id_usuario,
         None,
         f"Proyecto agregado: {nombre}",
         {
@@ -91,7 +91,7 @@ def modificar_proyecto(id_proyecto: int):
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.PROYECTO_MODIFICAR,
-        None,
+        g.id_usuario,
         None,
         f"Proyecto modificado: {nombre}",
         {
@@ -121,7 +121,7 @@ def deshabilitar_proyecto(id_proyecto: int):
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.PROYECTO_DESHABILITAR,
-        None,
+        g.id_usuario,
         None,
         f"Proyecto deshabilitado: {proyecto[1]}",
         {
