@@ -1,15 +1,17 @@
 import logging
 from flask import Blueprint, g, request
 from oracledb import Connection
-from app.maestros import ESTADOS, TIPOS_EVENTO
+from app.maestros import ESTADOS, TIPOS_EVENTO, ROLES
 from app.crud import proyectos as crud_proyectos
 from app.crud import eventos as crud_eventos
+from app import sesion
 
 api = Blueprint("proyectos", __name__, url_prefix="/api/proyectos")
 
 logger = logging.getLogger(__name__)
 
 @api.route("", methods=["GET"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def obtener_proyectos():
     logger.info("Obteniendo proyectos desde la BD")
     # obtener parametros desde la request
@@ -36,6 +38,7 @@ def obtener_proyectos():
     return {"items": items, "total": total}, 200
 
 @api.route("", methods=["POST"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def agregar_proyecto():
     logger.info("Agregar proyecto")
     # obtener datos desde la request
@@ -68,6 +71,7 @@ def agregar_proyecto():
     return {"status": "success", "mensaje": "Proyecto agregado correctamente"}, 201
 
 @api.route("/<int:id_proyecto>", methods=["PUT"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def modificar_proyecto(id_proyecto: int):
     logger.info(f"Modificando proyecto {id_proyecto}")
     # obtener datos desde la request
@@ -106,6 +110,7 @@ def modificar_proyecto(id_proyecto: int):
     return {"status": "success", "mensaje": "Proyecto modificado correctamente"}, 200
 
 @api.route("/<int:id_proyecto>", methods=["DELETE"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def deshabilitar_proyecto(id_proyecto: int):
     logger.info(f"Deshabilitando proyecto {id_proyecto}")
     # obtener conexión a la BD
@@ -129,6 +134,7 @@ def deshabilitar_proyecto(id_proyecto: int):
     return {"status": "success", "mensaje": "Proyecto deshabilitado correctamente"}, 200
 
 @api.route("lista", methods=["GET"])
+@sesion.ruta_protegida([ROLES.OPERADOR, ROLES.ADMIN])
 def obtener_lista_proyectos():
     logger.info("Obteniendo lista de proyectos")
     # obtener conexión a la BD

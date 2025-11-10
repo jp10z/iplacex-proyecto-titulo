@@ -5,12 +5,14 @@ from app.common import contrasenias
 from app.maestros import ESTADOS, ROLES, TIPOS_EVENTO
 from app.crud import usuarios as crud_usuarios
 from app.crud import eventos as crud_eventos
+from app import sesion
 
 api = Blueprint("usuarios", __name__, url_prefix="/api/usuarios")
 
 logger = logging.getLogger(__name__)
 
 @api.route("", methods=["GET"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def obtener_usuarios():
     logger.info("Obteniendo usuarios desde la BD")
     # obtener parametros desde la request
@@ -37,6 +39,7 @@ def obtener_usuarios():
     return {"items": items, "total": total}, 200
 
 @api.route("", methods=["POST"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def agregar_usuario():
     logger.info("Agregar usuario")
     # obtener datos desde la request
@@ -80,6 +83,7 @@ def agregar_usuario():
     return {"status": "success", "mensaje": "Usuario agregado correctamente"}, 201
 
 @api.route("/<int:id_usuario>", methods=["PUT"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def modificar_usuario(id_usuario: int):
     logger.info(f"Modificando usuario {id_usuario}")
     # obtener datos desde la request
@@ -131,6 +135,7 @@ def modificar_usuario(id_usuario: int):
     return {"status": "success", "mensaje": "Usuario modificado correctamente"}, 200
 
 @api.route("/<int:id_usuario>", methods=["DELETE"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def deshabilitar_usuario(id_usuario: int):
     logger.info(f"Deshabilitando usuario {id_usuario}")
     # obtener conexión a la BD

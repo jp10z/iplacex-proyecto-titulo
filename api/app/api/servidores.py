@@ -1,16 +1,18 @@
 import logging
 from flask import Blueprint, g, request
 from oracledb import Connection
-from app.maestros import ESTADOS, TIPOS_EVENTO
+from app.maestros import ESTADOS, TIPOS_EVENTO, ROLES
 from app.crud import servidores as crud_servidores
 from app.crud import proyectos as crud_proyectos
 from app.crud import eventos as crud_eventos
+from app import sesion
 
 api = Blueprint("servidores", __name__, url_prefix="/api/servidores")
 
 logger = logging.getLogger(__name__)
 
 @api.route("", methods=["GET"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def obtener_servidores():
     logger.info("Obteniendo servidores desde la BD")
     # obtener parametros desde la request
@@ -41,6 +43,7 @@ def obtener_servidores():
     return {"items": items, "total": total}, 200
 
 @api.route("", methods=["POST"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def agregar_servidor():
     logger.info("Agregar servidor")
     # obtener datos desde la request
@@ -80,6 +83,7 @@ def agregar_servidor():
     return {"status": "success", "mensaje": "Servidor agregado correctamente"}, 201
 
 @api.route("/<int:id_servidor>", methods=["PUT"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def modificar_servidor(id_servidor: int):
     logger.info(f"Modificando servidor {id_servidor}")
     # obtener datos desde la request
@@ -127,6 +131,7 @@ def modificar_servidor(id_servidor: int):
     return {"status": "success", "mensaje": "Servidor modificado correctamente"}, 200
 
 @api.route("/<int:id_servidor>", methods=["DELETE"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def deshabilitar_servidor(id_servidor: int):
     logger.info(f"Deshabilitando servidor {id_servidor}")
     # obtener conexión a la BD

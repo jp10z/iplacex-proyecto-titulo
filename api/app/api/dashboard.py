@@ -1,16 +1,18 @@
 import logging
 from flask import Blueprint, g, request
 from oracledb import Connection
-from app.maestros import TIPOS_EVENTO
+from app.maestros import TIPOS_EVENTO, ROLES
 from app.crud import dashboard as crud_dashboard
 from app.crud import servidores as crud_servidores
 from app.crud import eventos as crud_eventos
+from app import sesion
 
 api = Blueprint("dashboard", __name__, url_prefix="/api/dashboard")
 
 logger = logging.getLogger(__name__)
 
 @api.route("/estados/<int:id_proyecto>", methods=["GET"])
+@sesion.ruta_protegida([ROLES.ADMIN, ROLES.OPERADOR])
 def obtener_estados_servidores(id_proyecto: int):
     logger.info("Obteniendo estados de servidores desde la BD")
     # Obtener servidores desde la BD
@@ -31,6 +33,7 @@ def obtener_estados_servidores(id_proyecto: int):
     return {"items": items}, 200
 
 @api.route("/detalles/<int:id_servidor>", methods=["GET"])
+@sesion.ruta_protegida([ROLES.ADMIN, ROLES.OPERADOR])
 def obtener_detalles_acceso_servidor(id_servidor: int):
     logger.info(f"Obteniendo detalles de acceso del servidor {id_servidor} desde la BD")
     # Obtener detalles desde la BD
@@ -55,6 +58,7 @@ def obtener_detalles_acceso_servidor(id_servidor: int):
     return {"item": item}, 200
 
 @api.route("/acceso", methods=["POST"])
+@sesion.ruta_protegida([ROLES.ADMIN, ROLES.OPERADOR])
 def agregar_acceso():
     logger.info("Agregar acceso a servidor")
     # obtener datos desde la request

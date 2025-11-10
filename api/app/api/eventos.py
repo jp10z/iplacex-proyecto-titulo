@@ -1,12 +1,15 @@
 import logging, json
 from flask import Blueprint, g, request
 from app.crud import eventos as crud_eventos
+from app.maestros import ROLES
+from app import sesion
 
 api = Blueprint("eventos", __name__, url_prefix="/api/eventos")
 
 logger = logging.getLogger(__name__)
 
 @api.route("", methods=["GET"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def obtener_eventos():
     logger.info("Obteniendo eventos desde la BD")
     # obtener parametros desde la request
@@ -50,6 +53,7 @@ def obtener_eventos():
     return {"items": items, "total": total}, 200
 
 @api.route("/<int:id_evento>", methods=["GET"])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def obtener_datos_evento(id_evento: int):
     logger.info(f"Obteniendo datos de evento con ID: {id_evento}")
     evento = crud_eventos.obtener_datos_evento(g.bd_conexion, id_evento)
