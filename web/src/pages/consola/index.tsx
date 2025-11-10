@@ -5,20 +5,10 @@ import { ProyectosPage } from "./proyectos";
 import { ServidoresPage } from "./servidores";
 import { EventosPage } from "./eventos";
 import { ErrorPage404 } from "@/pages/error/404";
-import { Navbar } from "@/components/navbar";
+import { Navbar, type Link } from "@/components/navbar";
 import { useSesion } from "@/context/SesionContext";
 import { logout } from "@/api/auth";
 import { useState } from "react";
-
-const NAVBAR_LINKS = [
-    { texto: "Dashboard", url: "/consola" },
-    { texto: "Administración", sublinks: [
-        { texto: "Usuarios",  url: "/consola/usuarios" },
-        { texto: "Servidores", url: "/consola/servidores" },
-        { texto: "Proyectos", url: "/consola/proyectos" },
-        { texto: "Eventos", url: "/consola/eventos" }
-    ] }
-]
 
 export function ConsolaPage() {
     const { datosSesion, autenticado, fetchingDatosSesion, clearSesion } = useSesion();
@@ -47,10 +37,24 @@ export function ConsolaPage() {
         return <div>Cerrando sesión...</div>;
     }
 
+    const rutas: Link[] = [
+        { texto: "Dashboard", url: "/consola" },
+    ];
+    if (datosSesion.nombre_rol === "ADMIN") {
+        rutas.push(
+            { texto: "Administración", sublinks: [
+                { texto: "Usuarios",  url: "/consola/usuarios" },
+                { texto: "Servidores", url: "/consola/servidores" },
+                { texto: "Proyectos", url: "/consola/proyectos" },
+                { texto: "Eventos", url: "/consola/eventos" }
+            ] }
+        );
+    }
+
     return (
         <>
         <Navbar
-            links={NAVBAR_LINKS}
+            links={rutas}
             nombreUsuario={datosSesion.nombre_usuario}
             correoUsuario={datosSesion.correo_usuario}
             nombreRol={datosSesion.nombre_rol}
@@ -59,10 +63,14 @@ export function ConsolaPage() {
         <div style={{ margin: "10px" }}>
             <Routes>
                 <Route path="/" element={<DashboardPage />} />
-                <Route path="/usuarios" element={<UsuariosPage />} />
-                <Route path="/proyectos" element={<ProyectosPage />} />
-                <Route path="/servidores" element={<ServidoresPage />} />
-                <Route path="/eventos" element={<EventosPage />} />
+                {datosSesion.nombre_rol === "ADMIN" &&
+                    <>
+                        <Route path="/usuarios" element={<UsuariosPage />} />
+                        <Route path="/proyectos" element={<ProyectosPage />} />
+                        <Route path="/servidores" element={<ServidoresPage />} />
+                        <Route path="/eventos" element={<EventosPage />} />
+                    </>
+                }
                 <Route path="*" element={<ErrorPage404 />} />
             </Routes>
         </div>

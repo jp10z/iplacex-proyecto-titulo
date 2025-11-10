@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import classes from "./index.module.css";
 
-type Link = {
+export type Link = {
     texto: string;
     url?: string;
     sublinks?: Array<Link>;
