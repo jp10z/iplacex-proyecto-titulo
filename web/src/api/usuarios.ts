@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { IUsuariosResponse } from "@/interfaces/usuarios";
+import type { IProyectosListaResponse } from "@/interfaces/proyectos";
 
 const BASE_URL = "http://localhost:5000/api";
 
@@ -7,21 +8,23 @@ export async function obtenerUsuarios(paginaIndex: number, paginaSize: number, t
     return await axios.get<IUsuariosResponse>(`${BASE_URL}/usuarios?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}`);
 }
 
-export async function agregarUsuario(correo: string, nombre: string, contrasenia: string, rol: string) {
+export async function agregarUsuario(correo: string, nombre: string, contrasenia: string, rol: string, proyectos: (string | number)[]) {
     const payload = {
         correo: correo,
         nombre: nombre,
         contrasenia: contrasenia,
-        rol: rol
+        rol: rol, 
+        proyectos: proyectos
     }
     return await axios.post(`${BASE_URL}/usuarios`, payload);
 }
 
-export async function modificarUsuario(id: number, correo: string, nombre: string, contrasenia: string, rol: string) {
+export async function modificarUsuario(id: number, correo: string, nombre: string, contrasenia: string, rol: string, proyectos: (string | number)[]) {
     const payload: any = {
         correo: correo,
         nombre: nombre,
-        rol: rol
+        rol: rol,
+        proyectos: proyectos
     }
     if (contrasenia && contrasenia.trim() !== "") {
         payload.contrasenia = contrasenia;
@@ -31,4 +34,8 @@ export async function modificarUsuario(id: number, correo: string, nombre: strin
 
 export async function deshabilitarUsuario(id: number) {
     return await axios.delete(`${BASE_URL}/usuarios/${id}`);
+}
+
+export async function obtenerListaProyectosUsuario(idUsuario: number) {
+    return await axios.get<IProyectosListaResponse>(`${BASE_URL}/usuarios/proyectos/${idUsuario}`);
 }

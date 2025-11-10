@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Modal } from "@/components/modal";
 import { agregarUsuario } from "@/api/usuarios";
+import { obtenerListaProyectos } from "@/api/proyectos";
 import { toast } from "@/common/toast";
 import { OverlayCarga } from "@/components/overlay-carga";
+import { MultiSelect } from "@/components/multiselect";
 
 type Props = {
     modalAbierto: boolean;
@@ -15,12 +17,14 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
     const [nombre, setNombre] = useState("");
     const [contrasenia, setContrasenia] = useState("");
     const [rol, setRol] = useState("OPERADOR");
+    const [proyectosDisponibles, setProyectosDisponibles] = useState<{valor: string | number, etiqueta: string}[]>([]);
+    const [proyectosSeleccionados, setProyectosSeleccionados] = useState<(string | number)[]>([]);
 
     function doAgregarUsuario(e: React.FormEvent) {
         e.preventDefault();
         console.log("Agregar usuario");
         setCargando(true);
-        agregarUsuario(correo, nombre, contrasenia, rol)
+        agregarUsuario(correo, nombre, contrasenia, rol, proyectosSeleccionados)
             .then((response) => {
                 console.log("Usuario agregado:", response.data);
                 toast.success("Usuario agregado", "El usuario ha sido agregado correctamente.");
@@ -39,6 +43,21 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
             });
     }
 
+    function cargarListaProyectos() {
+        obtenerListaProyectos()
+            .then((response) => {
+                const proyectos = response.data.items.map((proyecto) => ({
+                    valor: proyecto.id_proyecto,
+                    etiqueta: proyecto.nombre,
+                }));
+                setProyectosDisponibles(proyectos);
+            }
+            )
+            .catch((error) => {
+                console.error("Error al obtener la lista de proyectos:", error);
+            });
+    }
+
     useEffect(() => {
         // Resetear los datos del formulario cuando se cierre el modal
         if (!modalAbierto) {
@@ -46,7 +65,11 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
             setNombre("");
             setContrasenia("");
             setRol("OPERADOR");
+            setProyectosSeleccionados([]);
+        } else {
+            cargarListaProyectos();
         }
+        console.log(proyectosSeleccionados)
     }, [modalAbierto]);
 
     return <Modal
@@ -56,6 +79,7 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
         deshabilitarCerrar={cargando}
     >
         <OverlayCarga cargando={cargando}>
+            
             <form onSubmit={doAgregarUsuario}>
                 <div>
                     <label htmlFor="correo">Correo:</label>
@@ -98,6 +122,14 @@ export function AgregarUsuarioModal({ modalAbierto, cerrarModal }: Props) {
                         <option value="OPERADOR">Operador</option>
                         <option value="ADMIN">Administrador</option>
                     </select>
+                </div>
+                <div>
+                    <label>Proyectos:</label>
+                    <MultiSelect
+                        opciones={proyectosDisponibles}
+                        seleccionados={proyectosSeleccionados}  
+                        setSeleccionados={setProyectosSeleccionados}
+                    />
                 </div>
                 <div className="modal-acciones">
                     <button type="submit">Agregar</button>

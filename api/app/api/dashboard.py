@@ -3,6 +3,7 @@ from flask import Blueprint, g, request
 from oracledb import Connection
 from app.maestros import TIPOS_EVENTO, ROLES
 from app.crud import dashboard as crud_dashboard
+from app.crud import usuarios as crud_usuarios
 from app.crud import servidores as crud_servidores
 from app.crud import eventos as crud_eventos
 from app import sesion
@@ -93,3 +94,21 @@ def agregar_acceso():
     )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Acceso configurado correctamente"}, 201
+
+@api.route("/proyectos", methods=["GET"])
+@sesion.ruta_protegida([ROLES.OPERADOR, ROLES.ADMIN])
+def obtener_lista_proyectos_usuario():
+    logger.info("Obteniendo lista de proyectos asociadas al usuario")
+    # obtener conexión a la BD
+    bd_conexion: Connection = g.bd_conexion
+    id_usuario: int = g.id_usuario
+    # obtener proyectos desde la BD (formato lista)
+    proyectos = crud_usuarios.obtener_lista_proyectos_usuario(bd_conexion, id_usuario)
+    # formatear resultados
+    items = []
+    for fila in proyectos:
+        items.append({
+            "id_proyecto": fila[0],
+            "nombre": fila[1],
+        })
+    return {"items": items}, 200

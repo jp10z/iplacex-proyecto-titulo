@@ -134,7 +134,7 @@ def deshabilitar_proyecto(id_proyecto: int):
     return {"status": "success", "mensaje": "Proyecto deshabilitado correctamente"}, 200
 
 @api.route("lista", methods=["GET"])
-@sesion.ruta_protegida([ROLES.OPERADOR, ROLES.ADMIN])
+@sesion.ruta_protegida([ROLES.ADMIN])
 def obtener_lista_proyectos():
     logger.info("Obteniendo lista de proyectos")
     # obtener conexión a la BD

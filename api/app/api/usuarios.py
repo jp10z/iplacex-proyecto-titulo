@@ -51,6 +51,7 @@ def agregar_usuario():
     contrasenia: str = datos.get("contrasenia", "").strip()
     # Se encripta la clave
     hash_contrasenia = contrasenias.generar_hash_contrasenia(contrasenia)
+    # rol del usuario
     rol: str = datos.get("rol", "").strip()
     if rol == "ADMIN":
         id_rol = ROLES.ADMIN
@@ -58,6 +59,8 @@ def agregar_usuario():
         id_rol = ROLES.OPERADOR
     else:
         return {"status": "error", "mensaje": "Rol no válido"}, 422
+    # proyectos
+    proyectos: list[int] = datos.get("proyectos", [])
     # obtener conexión a la BD
     bd_conexion: Connection = g.bd_conexion
     # validar si el correo ya existe
@@ -66,6 +69,8 @@ def agregar_usuario():
         return {"status": "error", "mensaje": "El correo ya está en uso"}, 422
     # insertar en la BD
     id_usuario = crud_usuarios.agregar_usuario(bd_conexion, correo, nombre, hash_contrasenia, id_rol)
+    crud_usuarios.setear_proyectos_usuario(bd_conexion, id_usuario, proyectos)
+    proyectos_lista = crud_usuarios.obtener_lista_proyectos_usuario(g.bd_conexion, id_usuario)
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.USUARIO_AGREGAR,
@@ -76,7 +81,8 @@ def agregar_usuario():
             "id_usuario": id_usuario,
             "correo": correo,
             "nombre": nombre,
-            "rol": rol
+            "rol": rol,
+            "proyectos": [{"id_proyecto": p[0], "nombre": p[1]} for p in proyectos_lista]
         }
     )
     bd_conexion.commit()
@@ -102,14 +108,19 @@ def modificar_usuario(id_usuario: int):
         id_rol = ROLES.OPERADOR
     else:
         return {"status": "error", "mensaje": "Rol no válido"}, 422
+    # proyectos
+    proyectos: list[int] = datos.get("proyectos", [])
     # obtener conexión a la BD
     bd_conexion: Connection = g.bd_conexion
     # validar si el correo ya existe en otro usuario (que no sea el mismo)
     usuario_existente = crud_usuarios.obtener_usuario_por_correo(bd_conexion, correo)
+    proyectos_previos = crud_usuarios.obtener_lista_proyectos_usuario(bd_conexion, id_usuario)
     if usuario_existente is not None and usuario_existente[0] != id_usuario:
         return {"status": "error", "mensaje": "El correo ya está en uso"}, 422
     # actualizar usuario en la BD
     crud_usuarios.modificar_usuario(bd_conexion, id_usuario, correo, nombre, id_rol, hash_contrasenia)
+    crud_usuarios.setear_proyectos_usuario(bd_conexion, id_usuario, proyectos)
+    proyectos_actuales = crud_usuarios.obtener_lista_proyectos_usuario(bd_conexion, id_usuario)
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.USUARIO_MODIFICAR,
@@ -123,11 +134,13 @@ def modificar_usuario(id_usuario: int):
                 "correo": usuario_existente[1],
                 "nombre": usuario_existente[2],
                 "rol": usuario_existente[3],
+                "proyectos": [{"id_proyecto": p[0], "nombre": p[1]} for p in proyectos_previos]
             },
             "datos_nuevos": {
                 "correo": correo,
                 "nombre": nombre,
-                "rol": rol
+                "rol": rol,
+                "proyectos": [{"id_proyecto": p[0], "nombre": p[1]} for p in proyectos_actuales]
             }
         }
     )
@@ -159,3 +172,20 @@ def deshabilitar_usuario(id_usuario: int):
     )
     bd_conexion.commit()
     return {"status": "success", "mensaje": "Usuario deshabilitado correctamente"}, 200
+
+@api.route("/proyectos/<int:id_usuario>", methods=["GET"])
+@sesion.ruta_protegida([ROLES.ADMIN])
+def obtener_lista_proyectos_usuario(id_usuario: int):
+    logger.info("Obteniendo lista de proyectos asociadas al usuario")
+    # obtener conexión a la BD
+    bd_conexion: Connection = g.bd_conexion
+    # obtener proyectos desde la BD (formato lista)
+    proyectos = crud_usuarios.obtener_lista_proyectos_usuario(bd_conexion, id_usuario)
+    # formatear resultados
+    items = []
+    for fila in proyectos:
+        items.append({
+            "id_proyecto": fila[0],
+            "nombre": fila[1],
+        })
+    return {"items": items}, 200

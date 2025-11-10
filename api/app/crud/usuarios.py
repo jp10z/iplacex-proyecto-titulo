@@ -173,3 +173,85 @@ def actualizar_estado_usuario(bd_conexion: Connection, id_usuario: int, id_estad
     }
     cursor.execute(query, query_vars)
     cursor.close()
+
+def obtener_lista_proyectos_usuario(bd_conexion: Connection, id_usuario: int):
+    cursor = bd_conexion.cursor()
+    query = """
+        SELECT p.id_proyecto, p.nombre
+        FROM usuario_proyecto up
+        INNER JOIN proyecto p
+            ON up.id_proyecto = p.id_proyecto
+        WHERE up.id_usuario = :id_usuario
+        AND p.id_estado = :id_estado
+        AND up.id_estado = :id_estado
+        ORDER BY p.nombre ASC
+    """
+    query_vars = {
+        "id_estado": ESTADOS.ACTIVO,
+        "id_usuario": id_usuario
+    }
+    cursor.execute(query, query_vars)
+    resultado = cursor.fetchall()
+    cursor.close()
+    return resultado
+
+def setear_proyectos_usuario(bd_conexion: Connection, id_usuario: int, lista_id_proyectos: list[int]):
+    # bindeo de los proyectos (oracle no soporta listas directamente)
+    if not lista_id_proyectos:
+        lista_id_proyectos = [-1]  # truco en caso de que no se pasen proyectos
+    proyectos_vars_sql = ", ".join(f":id_proyecto_{i}" for i in range(len(lista_id_proyectos)))
+    cursor = bd_conexion.cursor()
+    # deshabilitar todas las asociaciones activas actuales que no estén en la nueva lista
+    query_deshabilitar = """
+        UPDATE usuario_proyecto
+        SET id_estado = :id_estado_inactivo, fecha_actualizacion = :fecha_actualizacion
+        WHERE id_usuario = :id_usuario
+        AND id_estado = :id_estado_activo
+        AND id_proyecto NOT IN ({proyectos_vars_sql})
+    """.format(proyectos_vars_sql=proyectos_vars_sql)
+    vars_deshabilitar = {
+        "fecha_actualizacion": datetime.now(),
+        "id_usuario": id_usuario,
+        "id_estado_activo": ESTADOS.ACTIVO,
+        "id_estado_inactivo": ESTADOS.INACTIVO
+    }
+    for indice, id_proyecto in enumerate(lista_id_proyectos):
+        vars_deshabilitar[f"id_proyecto_{indice}"] = id_proyecto
+    cursor.execute(query_deshabilitar, vars_deshabilitar)
+    # reactivar en caso de que existan asociaciones deshabilitadas
+    query_reactivar = """
+        UPDATE usuario_proyecto
+        SET id_estado = :id_estado_activo, fecha_actualizacion = :fecha_actualizacion
+        WHERE id_usuario = :id_usuario
+        AND id_estado = :id_estado_inactivo
+        AND id_proyecto IN ({proyectos_vars_sql})
+    """.format(proyectos_vars_sql=proyectos_vars_sql)
+    vars_reactivar = {
+        "fecha_actualizacion": datetime.now(),
+        "id_usuario": id_usuario,
+        "id_estado_activo": ESTADOS.ACTIVO,
+        "id_estado_inactivo": ESTADOS.INACTIVO,
+    }
+    for indice, id_proyecto in enumerate(lista_id_proyectos):
+        vars_reactivar[f"id_proyecto_{indice}"] = id_proyecto
+    cursor.execute(query_reactivar, vars_reactivar)
+    # insertar nuevas asociaciones que no existan
+    query_insertar = """
+        INSERT INTO usuario_proyecto (id_usuario, id_proyecto, id_estado)
+        SELECT :id_usuario, p.id_proyecto, :id_estado
+        FROM proyecto p
+        WHERE p.id_proyecto IN ({proyectos_vars_sql})
+        AND p.id_proyecto NOT IN (
+            SELECT up.id_proyecto
+            FROM usuario_proyecto up
+            WHERE up.id_usuario = :id_usuario
+        )
+    """.format(proyectos_vars_sql=proyectos_vars_sql)
+    vars_insertar = {
+        "id_usuario": id_usuario,
+        "id_estado": ESTADOS.ACTIVO,
+    }
+    for indice, id_proyecto in enumerate(lista_id_proyectos):
+        vars_insertar[f"id_proyecto_{indice}"] = id_proyecto
+    cursor.execute(query_insertar, vars_insertar)
+    cursor.close()

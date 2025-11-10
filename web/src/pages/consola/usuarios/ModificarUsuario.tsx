@@ -4,6 +4,9 @@ import { modificarUsuario } from "@/api/usuarios";
 import type { IUsuario } from "@/interfaces/usuarios";
 import { toast } from "@/common/toast";
 import { OverlayCarga } from "@/components/overlay-carga";
+import { obtenerListaProyectos } from "@/api/proyectos";
+import { obtenerListaProyectosUsuario } from "@/api/usuarios";
+import { MultiSelect } from "@/components/multiselect";
 
 type Props = {
     modalAbierto: boolean;
@@ -17,13 +20,15 @@ export function ModificarUsuarioModal({ modalAbierto, cerrarModal, usuario }: Pr
     const [nombre, setNombre] = useState("");
     const [contrasenia, setContrasenia] = useState("");
     const [rol, setRol] = useState("OPERADOR");
+    const [proyectosDisponibles, setProyectosDisponibles] = useState<{valor: string | number, etiqueta: string}[]>([]);
+    const [proyectosSeleccionados, setProyectosSeleccionados] = useState<(string | number)[]>([]);
 
     function doModificarUsuario(e: React.FormEvent) {
         e.preventDefault();
         if (!usuario) return;
         console.log("Modificar usuario");
         setCargando(true);
-        modificarUsuario(usuario.id, correo, nombre, contrasenia, rol)
+        modificarUsuario(usuario.id, correo, nombre, contrasenia, rol, proyectosSeleccionados)
             .then((response) => {
                 console.log("Usuario modificado:", response.data);
                 toast.success("Usuario modificado", "El usuario ha sido modificado correctamente.");
@@ -42,14 +47,57 @@ export function ModificarUsuarioModal({ modalAbierto, cerrarModal, usuario }: Pr
             });
     }
 
-    useEffect(() => {
-        // Cuando se abra el modal, cargar los datos del usuario a modificar
+    function cargarListaProyectos() {
+        setCargando(true);
+        obtenerListaProyectos()
+            .then((response) => {
+                const proyectos = response.data.items.map((proyecto) => ({
+                    valor: proyecto.id_proyecto,
+                    etiqueta: proyecto.nombre,
+                }));
+                setProyectosDisponibles(proyectos);
+                cargarListaProyectosUsuario();
+            }
+            )
+            .catch((error) => {
+                console.error("Error al obtener la lista de proyectos:", error);
+            });
+    }
+
+    function cargarListaProyectosUsuario() {
         if (!usuario) return;
-        setCorreo(usuario.correo);
-        setNombre(usuario.nombre);
-        setContrasenia("");
-        setRol(usuario.rol);
-    }, [usuario]);
+        obtenerListaProyectosUsuario(usuario.id)
+            .then((response) => {
+                setProyectosSeleccionados(
+                    response.data.items
+                        .map((proyecto) => proyecto.id_proyecto)
+                );
+            })
+            .catch((error) => {
+                console.error("Error al obtener la lista de proyectos del usuario:", error);
+            })
+            .finally(() => {
+                setCargando(false);
+            });
+    }
+
+    useEffect(() => {
+        // cargar datos del usuario cuando se abra el modal
+        if (modalAbierto && usuario) {
+            setCorreo(usuario.correo);
+            setNombre(usuario.nombre);
+            setRol(usuario.rol);
+            cargarListaProyectos();
+        } else {
+            // resetear
+            setCorreo("");
+            setNombre("");
+            setContrasenia("");
+            setRol("OPERADOR");
+            setProyectosSeleccionados([]);
+            setCargando(true)
+        }
+    }, [usuario, modalAbierto]);
 
     return <Modal
         modalAbierto={modalAbierto}
@@ -100,6 +148,14 @@ export function ModificarUsuarioModal({ modalAbierto, cerrarModal, usuario }: Pr
                         <option value="OPERADOR">Operador</option>
                         <option value="ADMIN">Administrador</option>
                     </select>
+                </div>
+                <div>
+                    <label>Proyectos:</label>
+                    <MultiSelect
+                        opciones={proyectosDisponibles}
+                        seleccionados={proyectosSeleccionados}  
+                        setSeleccionados={setProyectosSeleccionados}
+                    />
                 </div>
                 <div className="modal-acciones">
                     <button type="submit">Guardar</button>

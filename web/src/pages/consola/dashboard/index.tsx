@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import type { IDashboardEstadosResponse, IServidorEstado } from "@/interfaces/dashboard";
 import type { IProyectosListaResponse } from "@/interfaces/proyectos";
 import { obtenerEstadosServidores } from "@/api/dashboard";
-import { obtenerListaProyectos } from "@/api/proyectos";
+import { obtenerListaProyectosUsuario } from "@/api/dashboard";
 import { AgregarAccesoModal } from "./AgregarAcceso";
 import { DetallesAccesoModal } from "./DetallesAcceso";
 import { OverlayCarga } from "@/components/overlay-carga";
@@ -41,7 +41,7 @@ export function DashboardPage() {
     }
 
     function cargarListaProyectos() {
-        obtenerListaProyectos()
+        obtenerListaProyectosUsuario()
             .then((response) => {
                 setProyectos(response.data);
             })
