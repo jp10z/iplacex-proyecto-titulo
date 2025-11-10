@@ -61,3 +61,13 @@ def obtener_datos_sesion():
         "id_rol": id_rol,
         "nombre_rol": usuario[3]
     }, 200
+
+@api.route("/logout", methods=["POST"])
+@sesion.ruta_protegida([ROLES.ADMIN, ROLES.OPERADOR])
+def logout_usuario():
+    id_usuario = g.id_usuario
+    usuario = crud_usuarios.obtener_usuario_por_id(g.bd_conexion, id_usuario)
+    logger.info(f"Usuario {usuario[1]} ha cerrado sesión")
+    response = jsonify({"status": "success"})
+    response.set_cookie("token", "", expires=0, path="/")
+    return response, 200

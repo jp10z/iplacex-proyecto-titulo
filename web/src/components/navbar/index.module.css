@@ -3,6 +3,8 @@
     margin: 10px;
     padding: 4px;
     border: 1px solid #000000;
+    display: flex;
+    justify-content: space-between;
 }
 
 .mainLink {
@@ -22,7 +24,6 @@
     display: none;
     /* Para que el submenú se ponga justo debajo del link principal */
     top: 100%;
-    left: 0;
 }
 
 .mainLink:hover > .submenu {

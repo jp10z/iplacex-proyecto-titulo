@@ -7,6 +7,8 @@ import { EventosPage } from "./eventos";
 import { ErrorPage404 } from "@/pages/error/404";
 import { Navbar } from "@/components/navbar";
 import { useSesion } from "@/context/SesionContext";
+import { logout } from "@/api/auth";
+import { useState } from "react";
 
 const NAVBAR_LINKS = [
     { texto: "Dashboard", url: "/consola" },
@@ -20,22 +22,40 @@ const NAVBAR_LINKS = [
 
 export function ConsolaPage() {
     const { datosSesion, autenticado, fetchingDatosSesion, clearSesion } = useSesion();
+    const [realizandoLogout, setRealizandoLogout] = useState(false);
     const navigate = useNavigate();
 
     if (fetchingDatosSesion) {
         return <div>Validando sesión...</div>;
     }
 
-    if (!autenticado) {
+    if (!autenticado || !datosSesion) {
         navigate("/login");
         return null;
     }
 
-    console.log("Datos de sesión:", datosSesion);
+    function doLogout() {
+        setRealizandoLogout(true);
+        logout().finally(() => {
+            clearSesion();
+            navigate("/login");
+        });
+        
+    }
+
+    if (realizandoLogout) {
+        return <div>Cerrando sesión...</div>;
+    }
 
     return (
         <>
-        <Navbar links={NAVBAR_LINKS} />
+        <Navbar
+            links={NAVBAR_LINKS}
+            nombreUsuario={datosSesion.nombre_usuario}
+            correoUsuario={datosSesion.correo_usuario}
+            nombreRol={datosSesion.nombre_rol}
+            logout={doLogout}
+        />
         <div style={{ margin: "10px" }}>
             <Routes>
                 <Route path="/" element={<DashboardPage />} />

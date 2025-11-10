@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OverlayCarga } from "@/components/overlay-carga";
-import { login, obtenerDatosSesion } from "@/api/auth";
+import { login } from "@/api/auth";
 import { toast } from "@/common/toast";
 import { useSesion } from "@/context/SesionContext";
 
 export function LoginPage() {
-    const { datosSesion, autenticado, fetchingDatosSesion, refreshDatosSesion, clearSesion } = useSesion();
+    const { autenticado, fetchingDatosSesion, refreshDatosSesion } = useSesion();
     const [cargando, setCargando] = useState(false);
     const [correo, setCorreo] = useState("");
     const [contrasenia, setContrasenia] = useState("");

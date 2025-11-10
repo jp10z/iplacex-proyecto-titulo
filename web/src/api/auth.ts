@@ -14,3 +14,7 @@ export async function login(correo: string, contrasenia: string) {
 export async function obtenerDatosSesion(signal?: AbortSignal) {
     return await axios.get<IDatosSesion>(`${BASE_URL}/auth/datos`, { signal });
 }
+
+export async function logout() {
+    return await axios.post(`${BASE_URL}/auth/logout`);
+}
