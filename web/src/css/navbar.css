@@ -1,0 +1,71 @@
+/* css para el navbar */
+
+.navbar {
+    margin: 10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #FFFFFF;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+}
+
+.main-link {
+    display: inline;
+    position: relative;
+}
+
+.main-link > a {
+    text-decoration: none;
+    color: #000000;
+    display: inline-block;
+    padding: 6px 12px;
+}
+
+.main-link > a:hover {
+    background-color: #f1f1f1;
+    border-radius: 4px;
+}
+
+.submenu {
+    background-color: #FFFFFF;
+    padding: 4px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    list-style-type: none;
+    position: absolute;
+    z-index: 10;
+    min-width: 150px;
+    display: none;
+    /* Para que el submenú se ponga justo debajo del link principal */
+    top: 100%;
+}
+
+.main-link:hover > .submenu {
+    /* Mostrar el submenú cuando se pase el mouse por encima del link principal */
+    display: block;
+}
+
+.submenu li a {
+    text-decoration: none;
+    color: #000000;
+    display: block;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.submenu li a:hover {
+    background-color: #f1f1f1;
+    border-radius: 4px;
+}
+
+.submenu .datos-usuario {
+    padding: 8px;
+    list-style-type: none;
+    border-bottom: 1px solid #ced4da;
+    margin-bottom: 4px;
+}
+
+.submenu .datos-usuario li {
+    padding: 2px 0;
+}

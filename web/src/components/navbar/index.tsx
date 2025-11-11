@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import classes from "./index.module.css";
 
 export type Link = {
     texto: string;
@@ -26,13 +25,13 @@ export function Navbar({ links, nombreUsuario, correoUsuario, nombreRol, logout 
     }
 
     return (
-        <nav className={classes.navbar}>
+        <nav className="navbar">
             <ul>
                 {links?.map((link, index) => (
-                    <li key={index} className={classes.mainLink}>
+                    <li key={index} className="main-link">
                         <a href={link.url} onClick={(e) => navegarA(e, link.url)}>{link.texto}</a>
                         {link.sublinks && link.sublinks.length > 0 && (
-                            <ul className={classes.submenu} style={{left: 0}}>
+                            <ul className="submenu" style={{left: 0}}>
                                 {link.sublinks.map((sublink, subindex) => (
                                     <li key={subindex}>
                                         <a href={sublink.url} onClick={(e) => navegarA(e, sublink.url)}>{sublink.texto}</a>
@@ -44,12 +43,17 @@ export function Navbar({ links, nombreUsuario, correoUsuario, nombreRol, logout 
                 ))}
             </ul>
             <ul>
-                <li className={classes.mainLink}>
+                <li className="main-link">
                     <a>{nombreUsuario} </a>
-                    <ul className={classes.submenu} style={{right: 0}}>
-                        <li>{correoUsuario}</li>
-                        <li>{nombreRol}</li>
-                        <a onClick={logout}>Cerrar sesión</a>
+                    <ul className="submenu" style={{right: 0}}>
+                        <li>
+                            <ul className="datos-usuario">
+                                <li>{correoUsuario}</li>
+                                <li>{nombreRol}</li>
+                            </ul>
+                        </li>
+                        <li><a onClick={logout}>Cerrar sesión</a></li>
+
                     </ul>
                 </li>
             </ul>

@@ -18,6 +18,7 @@ thead {
 
 th, td {
   padding: 10px 12px;
+  white-space: nowrap;
 }
 
 th {
@@ -41,4 +42,11 @@ td button {
 .tabla-datos td button:not(:last-child) {
     /*Aplicar margen derecho a todos los botones menos al último en caso de que hayan */
     margin-right: 4px;
+}
+
+.tabla-contenedor {
+    /* Para que la tabla tenga su propio scroll horizontal */
+    width: 100%; 
+    overflow-x: auto; 
+    overflow-y: hidden; 
 }
