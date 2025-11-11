@@ -1,5 +1,3 @@
-import classes from "./index.module.css";
-
 type Props = {
     modalAbierto: boolean;
     cerrarModal?: () => void;
@@ -14,13 +12,13 @@ export function Modal({ modalAbierto, titulo, children, cerrarModal, deshabilita
     }
 
     return (
-        <div className={classes.modal}>
-            <div className={classes.modalContenido}>
-                <div className={classes.modalHeader}>
+        <div className="modal">
+            <div className="modal-contenido">
+                <div className="modal-header">
                     <h2>{titulo}</h2>
-                    {cerrarModal && !deshabilitarCerrar && <span className={classes.modalCerrar} onClick={cerrarModal}>X</span>}
+                    {cerrarModal && !deshabilitarCerrar && <span className="modal-cerrar" onClick={cerrarModal}>X</span>}
                 </div>
-                <div className={classes.modalCuerpo}>
+                <div className="modal-cuerpo">
                     {children}
                 </div>
             </div>

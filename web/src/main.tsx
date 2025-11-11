@@ -7,6 +7,7 @@ import "./css/inputs.css";
 import "./css/botones.css";
 import "./css/tablas.css";
 import "./css/navbar.css";
+import "./css/modal.css";
 
 import App from "./App.tsx";
 
