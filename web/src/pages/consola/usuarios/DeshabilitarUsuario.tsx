@@ -47,7 +47,7 @@ export function DeshabilitarUsuarioModal({ modalAbierto, cerrarModal, usuario }:
                 </div>
             )}
             <div className="modal-acciones">
-                <button onClick={doDeshabilitarUsuario}>Deshabilitar</button>
+                <button className="rojo" onClick={doDeshabilitarUsuario}>Deshabilitar</button>
                 <button onClick={() => cerrarModal(false)}>Cancelar</button>
             </div>
         </OverlayCarga>

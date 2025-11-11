@@ -60,7 +60,7 @@ export function ServidoresPage() {
         <>
             <h1>Servidores</h1>
             <div className="contenedor-responsivo" style={{ marginTop: "4px", marginBottom: "8px" }}>
-                <button disabled={cargando} onClick={() => setModalAgregarServidorAbierto(true)}>Agregar servidor</button>
+                <button className="azul" disabled={cargando} onClick={() => setModalAgregarServidorAbierto(true)}>Agregar servidor</button>
                 <select
                     className="item-auto"
                     value={proyectoSeleccionadoId ?? ""}
@@ -103,7 +103,7 @@ export function ServidoresPage() {
                                 <th>Nombre</th>
                                 <th>Descripción</th>
                                 <th>Proyecto</th>
-                                <th style={{ width: "150px" }}>Acciones</th>
+                                <th style={{ width: "166px" }}>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -48,7 +48,7 @@ export function DeshabilitarServidorModal({ modalAbierto, cerrarModal, servidor 
                 </div>
             )}
             <div className="modal-acciones">
-                <button onClick={doDeshabilitarServidor}>Deshabilitar</button>
+                <button className="rojo" onClick={doDeshabilitarServidor}>Deshabilitar</button>
                 <button onClick={() => cerrarModal(false)}>Cancelar</button>
             </div>
         </OverlayCarga>

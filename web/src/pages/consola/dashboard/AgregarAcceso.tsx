@@ -82,7 +82,7 @@ export function AgregarAccesoModal({ modalAbierto, cerrarModal, servidor }: Prop
                     />
                 </div>
                 <div className="modal-acciones">
-                    <button type="submit">Reservar ahora</button>
+                    <button className="azul" type="submit">Reservar ahora</button>
                     <button onClick={() => cerrarModal(false)}>Cancelar</button>
                 </div>
             </form>

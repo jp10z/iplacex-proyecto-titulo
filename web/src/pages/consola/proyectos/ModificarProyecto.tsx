@@ -76,7 +76,7 @@ export function ModificarProyectoModal({ modalAbierto, cerrarModal, proyecto }: 
                     />
                 </div>
                 <div className="modal-acciones">
-                    <button type="submit">Guardar</button>
+                    <button className="azul" type="submit">Guardar</button>
                     <button onClick={() => cerrarModal(false)}>Cancelar</button>
                 </div>
             </form>

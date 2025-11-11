@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import classes from "./index.module.css";
 
 type Props = {
     opciones: {
@@ -61,31 +60,43 @@ export function MultiSelect({opciones, seleccionados, setSeleccionados}: Props) 
     const dropdown = (
         <div
             ref={dropdownRef}
-            className={classes.dropdown}
+            className="multiselect-dropdown"
             style={{
                 top: coordenadas.top,
                 left: coordenadas.left,
                 width: coordenadas.width,
+                position: "absolute",
+                zIndex: 9999,
+                maxHeight: 150,
+                overflowY: "auto",
+                userSelect: "none"
             }}
         >
         {opciones.map((opcion) => (
-            <label key={opcion.valor} style={{ display: "block", padding: 4 }}>
-            <input
-                type="checkbox"
-                checked={seleccionados.includes(opcion.valor)}
-                onChange={() => toggleOpcion(opcion.valor)}
-            />{" "}
-            {opcion.etiqueta}
-            </label>
+            <div className="multiselect-opcion">
+                <label key={opcion.valor} style={{ display: "block", padding: 4 }}>
+                <input
+                    type="checkbox"
+                    checked={seleccionados.includes(opcion.valor)}
+                    onChange={() => toggleOpcion(opcion.valor)}
+                />{" "}
+                {opcion.etiqueta}
+                </label>
+            </div>
         ))}
         </div>
     );
 
     return (
-        <div ref={ref} style={{ position: "relative", width: "100%" }}>
+        <div className="multiselect" ref={ref} style={{ position: "relative", width: "100%" }}>
             <div
                 onClick={mostrarOcultar}
-                className={classes.seleccion}
+                className={"multiselect-seleccion"}
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    cursor: "default",
+                }}
             >
                 <span>
                 {seleccionados.length

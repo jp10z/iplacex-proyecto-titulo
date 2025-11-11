@@ -47,7 +47,7 @@ export function DeshabilitarProyectoModal({ modalAbierto, cerrarModal, proyecto 
                 </div>
             )}
             <div className="modal-acciones">
-                <button onClick={doDeshabilitarProyecto}>Deshabilitar</button>
+                <button className="rojo" onClick={doDeshabilitarProyecto}>Deshabilitar</button>
                 <button onClick={() => cerrarModal(false)}>Cancelar</button>
             </div>
         </OverlayCarga>

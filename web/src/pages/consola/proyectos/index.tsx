@@ -42,7 +42,7 @@ export function ProyectosPage() {
         <>
             <h1>Proyectos</h1>
             <div className="contenedor-responsivo" style={{ marginTop: "4px", marginBottom: "8px" }}>
-                <button disabled={cargando} onClick={() => setModalAgregarProyectoAbierto(true)}>Agregar proyecto</button>
+                <button className="azul" disabled={cargando} onClick={() => setModalAgregarProyectoAbierto(true)}>Agregar proyecto</button>
                 <input
                     className="item-full"
                     type="text" placeholder="Buscar..."
@@ -66,7 +66,7 @@ export function ProyectosPage() {
                                 <th>Nombre</th>
                                 <th>Descripción</th>
                                 <th>Servidores</th>
-                                <th style={{ width: "150px" }}>Acciones</th>
+                                <th style={{ width: "166px" }}>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>

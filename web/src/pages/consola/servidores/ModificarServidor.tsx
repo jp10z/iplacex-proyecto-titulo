@@ -107,7 +107,7 @@ export function ModificarServidorModal({ modalAbierto, cerrarModal, servidor, li
                     </select>
                 </div>
                 <div className="modal-acciones">
-                    <button type="submit">Guardar</button>
+                    <button className="rojo" type="submit">Guardar</button>
                     <button onClick={() => cerrarModal(false)}>Cancelar</button>
                 </div>
             </form>

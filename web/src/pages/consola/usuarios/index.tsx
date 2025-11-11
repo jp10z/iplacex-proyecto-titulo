@@ -53,7 +53,11 @@ export function UsuariosPage() {
         <>
             <h1>Usuarios</h1>
             <div className="contenedor-responsivo" style={{ marginTop: "4px", marginBottom: "8px" }}>
-                <button disabled={cargando} onClick={() => setModalAgregarUsuarioAbierto(true)}>Agregar usuario</button>
+                <button
+                    className="azul"
+                    disabled={cargando}
+                    onClick={() => setModalAgregarUsuarioAbierto(true)}
+                >Agregar usuario</button>
                 <input 
                     className="item-full"
                     type="text" placeholder="Buscar..."
@@ -77,7 +81,7 @@ export function UsuariosPage() {
                                 <th>Nombre</th>
                                 <th>Correo</th>
                                 <th>Rol</th>
-                                <th style={{ width: "150px" }}>Acciones</th>
+                                <th style={{ width: "168px" }}>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>

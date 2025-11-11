@@ -105,7 +105,7 @@ export function AgregarServidorModal({ modalAbierto, cerrarModal, listaProyectos
                     </select>
                 </div>
                 <div className="modal-acciones">
-                    <button type="submit">Agregar</button>
+                    <button className="azul" type="submit">Agregar</button>
                     <button onClick={() => cerrarModal(false)}>Cancelar</button>
                 </div>
             </form>

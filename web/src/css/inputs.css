@@ -1,0 +1,41 @@
+/* css para elementos input */
+
+/* BASE */
+
+input, select, textarea, .multiselect-seleccion {
+    background-color: #FFFFFF;
+    padding: 6px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #228be6;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+form input, form select, form textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form label {
+    display: block;
+    margin-top: 8px;
+}
+
+
+/* MULTISELECT */
+
+.multiselect-dropdown {
+    background: #FFF;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.multiselect-opcion:hover {
+    background-color: #f1f1f1;
+}

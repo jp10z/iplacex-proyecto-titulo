@@ -47,8 +47,8 @@ export function LoginPage() {
     }
 
     return <>
-        <h1>Iniciar sesión</h1>
-        <div className="contenedor-responsivo" style={{ marginTop: "4px", marginBottom: "8px" }}>
+        <div className="contenedor-login">
+            <h1>Sistema de gestión de reservas de servidores</h1>
             <OverlayCarga cargando={cargando}>
                 <form onSubmit={doLogin}>
                     <div>
@@ -58,7 +58,6 @@ export function LoginPage() {
                             name="correo"
                             value={correo}
                             onChange={(e) => setCorreo(e.target.value)}
-                            placeholder="sucorreo@dominio.com"
                             required
                         />
                     </div>
@@ -69,12 +68,11 @@ export function LoginPage() {
                             name="contrasenia"
                             value={contrasenia}
                             onChange={(e) => setContrasenia(e.target.value)}
-                            placeholder="********"
                             required
                         />
                     </div>
                     <div style={{marginTop: "8px"}}>
-                        <button type="submit">Iniciar sesión</button>
+                        <button className="azul" type="submit">Ingresar</button>
                     </div>
                 </form>
             </OverlayCarga>
