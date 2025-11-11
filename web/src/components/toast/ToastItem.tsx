@@ -1,6 +1,5 @@
 import React from "react";
 import type { ToastMensaje } from "@/interfaces/toast";
-import classes from "./ToastItem.module.css";
 
 interface ToastItemProps {
   toast: ToastMensaje;
@@ -10,7 +9,7 @@ interface ToastItemProps {
 const ToastItem: React.FC<ToastItemProps> = ({ toast, onClose }) => {
 
   return (
-    <div className={classes.toastItem}>
+    <div className={`toast-item toast-${toast.tipo}`}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h4 style={{ margin: 0 }}>{toast.titulo}</h4>
         <button 

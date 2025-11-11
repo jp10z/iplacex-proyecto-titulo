@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import { Icono } from "@/components/icono";
 
 export type Link = {
     texto: string;
     url?: string;
     sublinks?: Array<Link>;
+    icono?: string;
 }
 
 type Props = {
@@ -34,7 +36,7 @@ export function Navbar({ links, nombreUsuario, correoUsuario, nombreRol, logout 
                             <ul className="submenu" style={{left: 0}}>
                                 {link.sublinks.map((sublink, subindex) => (
                                     <li key={subindex}>
-                                        <a href={sublink.url} onClick={(e) => navegarA(e, sublink.url)}>{sublink.texto}</a>
+                                        <a href={sublink.url} onClick={(e) => navegarA(e, sublink.url)}>{sublink.icono && <Icono icono={sublink.icono} tamano={20} />} {sublink.texto}</a>
                                     </li>
                                 ))}
                             </ul>
@@ -52,7 +54,7 @@ export function Navbar({ links, nombreUsuario, correoUsuario, nombreRol, logout 
                                 <li>{nombreRol}</li>
                             </ul>
                         </li>
-                        <li><a onClick={logout}>Cerrar sesión</a></li>
+                        <li><a onClick={logout}><Icono icono="logout" tamano={20} /> Cerrar sesión</a></li>
 
                     </ul>
                 </li>

@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from "react";
 import { ToastContext } from "@/context/ToastContext";
 import { inicializarServicioToast } from "@/common/toast";
 import ToastItem from "./ToastItem";
-import classes from "./ToastContenedor.module.css";
 
 export const ToastContenedor: React.FC = () => {
   const { toasts, eliminarToast, mostrarToast } = useContext(ToastContext);
@@ -12,7 +11,7 @@ export const ToastContenedor: React.FC = () => {
   }, [mostrarToast]);
 
   return (
-    <div className={classes.toastContenedor}>
+    <div className="toast-contenedor">
       {toasts.map(toast => (
         <ToastItem key={toast.id} toast={toast} onClose={eliminarToast} />
       ))}

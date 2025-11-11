@@ -34,7 +34,7 @@
     border-radius: 6px;
     list-style-type: none;
     position: absolute;
-    z-index: 10;
+    z-index: 700;
     min-width: 150px;
     display: none;
     /* Para que el submenú se ponga justo debajo del link principal */
@@ -50,7 +50,10 @@
     text-decoration: none;
     color: #000000;
     display: block;
-    padding: 4px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     cursor: pointer;
 }
 

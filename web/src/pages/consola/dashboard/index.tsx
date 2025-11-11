@@ -125,7 +125,7 @@ export function DashboardPage() {
         // ejecutar inmediatamente la primera vez
         fetchData();
         // configurar para que se ejecute cada 20 segundos
-        const id = setInterval(fetchData, 20000) as unknown as number;
+        const id = setInterval(fetchData, 6000) as unknown as number;
         intervaloRef.current = id;
         // limpieza al salir o cambiar de proyecto
         return () => {

@@ -43,10 +43,10 @@ export function ConsolaPage() {
     if (datosSesion.nombre_rol === "ADMIN") {
         rutas.push(
             { texto: "Administración", sublinks: [
-                { texto: "Usuarios",  url: "/consola/usuarios" },
-                { texto: "Servidores", url: "/consola/servidores" },
-                { texto: "Proyectos", url: "/consola/proyectos" },
-                { texto: "Eventos", url: "/consola/eventos" }
+                { texto: "Usuarios",  url: "/consola/usuarios", icono: "users" },
+                { texto: "Servidores", url: "/consola/servidores", icono: "device-desktop" },
+                { texto: "Proyectos", url: "/consola/proyectos", icono: "stack-2" },
+                { texto: "Eventos", url: "/consola/eventos", icono: "clock" },
             ] }
         );
     }
