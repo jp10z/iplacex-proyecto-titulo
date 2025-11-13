@@ -1,4 +1,4 @@
-import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 
 const onRequest = (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
   config.withCredentials = true;
