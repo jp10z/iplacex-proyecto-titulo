@@ -2,7 +2,7 @@ import axios from "axios";
 import type { IUsuariosResponse } from "@/interfaces/usuarios";
 import type { IProyectosListaResponse } from "@/interfaces/proyectos";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export async function obtenerUsuarios(paginaIndex: number, paginaSize: number, textoBusqueda: string) {
     return await axios.get<IUsuariosResponse>(`${API_URL}/usuarios?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}`);

@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { IServidoresResponse } from "@/interfaces/servidores";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export async function obtenerServidores(paginaIndex: number, paginaSize: number, textoBusqueda: string, idProyecto?: number) {
     return await axios.get<IServidoresResponse>(`${API_URL}/servidores?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}&idProyecto=${idProyecto || ""}`);
