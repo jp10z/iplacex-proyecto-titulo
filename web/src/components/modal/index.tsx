@@ -1,3 +1,5 @@
+import { Icono } from "@/components/icono";
+
 type Props = {
     modalAbierto: boolean;
     cerrarModal?: () => void;
@@ -16,7 +18,7 @@ export function Modal({ modalAbierto, titulo, children, cerrarModal, deshabilita
             <div className="modal-contenido">
                 <div className="modal-header">
                     <h2>{titulo}</h2>
-                    {cerrarModal && !deshabilitarCerrar && <span className="modal-cerrar" onClick={cerrarModal}>X</span>}
+                    {cerrarModal && !deshabilitarCerrar && <button className="botton-icono" onClick={cerrarModal}><Icono icono="x" tamano={20} /></button>}
                 </div>
                 <div className="modal-cuerpo">
                     {children}
