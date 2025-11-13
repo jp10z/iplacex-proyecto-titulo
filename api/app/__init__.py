@@ -18,7 +18,11 @@ configurar_logger()
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", utils.generar_texto_aleatorio(32))
 app.config["CORS_HEADERS"] = "Content-Type"
-CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://localhost:3000", "*"])
+web_url = os.getenv("WEB_URL")
+if not web_url:
+    raise ValueError("La variable de entorno WEB_URL no está configurada")
+app.config["DEBUG"] = os.getenv("DEBUG", "0") == "1"
+CORS(app, supports_credentials=True, origins=[web_url])
 
 # inicialiar base de datos
 db_pool: ConnectionPool = inicializar_bd()

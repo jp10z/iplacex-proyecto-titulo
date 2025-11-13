@@ -21,13 +21,13 @@ def crear_token(id_usuario: int):
     return jwt.encode(payload, current_app.config["JWT_SECRET_KEY"], algorithm="HS256")
 
 def guardar_cookie_token(response: Response, token: str):
-    # RECORDAR CONFIGURAR BIEN ESTO CUANDO HAGA DEOPLOY
+    logger.debug(f"Guardando token en cookie, debug={current_app.config['DEBUG']}")
     response.set_cookie(
         "token",
         token,
         httponly=True,
-        secure=False,
-        samesite="Lax",
+        secure=current_app.config["DEBUG"] == False,
+        samesite="Lax" if current_app.config["DEBUG"] == True else "None",
         path="/",
     )
     return response
