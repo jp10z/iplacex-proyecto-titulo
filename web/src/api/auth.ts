@@ -1,20 +1,21 @@
 import axios from "axios";
 import type { IDatosSesion } from "@/interfaces/auth";
 
-const BASE_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function login(correo: string, contrasenia: string) {
     const payload = {
         correo: correo,
         contrasenia: contrasenia
     }
-    return await axios.post(`${BASE_URL}/auth/login`, payload);
+    return await axios.post(`${API_URL}/auth/login`, payload);
 }
 
 export async function obtenerDatosSesion(signal?: AbortSignal) {
-    return await axios.get<IDatosSesion>(`${BASE_URL}/auth/datos`, { signal });
+    console.log('API_URL:', API_URL);
+    return await axios.get<IDatosSesion>(`${API_URL}/auth/datos`, { signal });
 }
 
 export async function logout() {
-    return await axios.post(`${BASE_URL}/auth/logout`);
+    return await axios.post(`${API_URL}/auth/logout`);
 }

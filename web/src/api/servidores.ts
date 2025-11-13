@@ -1,10 +1,10 @@
 import axios from "axios";
 import type { IServidoresResponse } from "@/interfaces/servidores";
 
-const BASE_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function obtenerServidores(paginaIndex: number, paginaSize: number, textoBusqueda: string, idProyecto?: number) {
-    return await axios.get<IServidoresResponse>(`${BASE_URL}/servidores?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}&idProyecto=${idProyecto || ""}`);
+    return await axios.get<IServidoresResponse>(`${API_URL}/servidores?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}&idProyecto=${idProyecto || ""}`);
 }
 
 export async function agregarServidor(nombre: string, descripcion: string, idProyecto: number) {
@@ -13,7 +13,7 @@ export async function agregarServidor(nombre: string, descripcion: string, idPro
         descripcion: descripcion,
         id_proyecto: idProyecto
     }
-    return await axios.post(`${BASE_URL}/servidores`, payload);
+    return await axios.post(`${API_URL}/servidores`, payload);
 }
 
 export async function modificarServidor(id: number, nombre: string, descripcion: string, idProyecto: number) {
@@ -22,9 +22,9 @@ export async function modificarServidor(id: number, nombre: string, descripcion:
         descripcion: descripcion,
         id_proyecto: idProyecto
     }
-    return await axios.put(`${BASE_URL}/servidores/${id}`, payload);
+    return await axios.put(`${API_URL}/servidores/${id}`, payload);
 }
 
 export async function deshabilitarServidor(id: number) {
-    return await axios.delete(`${BASE_URL}/servidores/${id}`);
+    return await axios.delete(`${API_URL}/servidores/${id}`);
 }

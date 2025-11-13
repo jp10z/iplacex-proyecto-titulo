@@ -2,10 +2,10 @@ import axios from "axios";
 import type { IUsuariosResponse } from "@/interfaces/usuarios";
 import type { IProyectosListaResponse } from "@/interfaces/proyectos";
 
-const BASE_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function obtenerUsuarios(paginaIndex: number, paginaSize: number, textoBusqueda: string) {
-    return await axios.get<IUsuariosResponse>(`${BASE_URL}/usuarios?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}`);
+    return await axios.get<IUsuariosResponse>(`${API_URL}/usuarios?buscar=${textoBusqueda}&paginaIndex=${paginaIndex}&paginaSize=${paginaSize}`);
 }
 
 export async function agregarUsuario(correo: string, nombre: string, contrasenia: string, rol: string, proyectos: (string | number)[]) {
@@ -16,7 +16,7 @@ export async function agregarUsuario(correo: string, nombre: string, contrasenia
         rol: rol, 
         proyectos: proyectos
     }
-    return await axios.post(`${BASE_URL}/usuarios`, payload);
+    return await axios.post(`${API_URL}/usuarios`, payload);
 }
 
 export async function modificarUsuario(id: number, correo: string, nombre: string, contrasenia: string, rol: string, proyectos: (string | number)[]) {
@@ -29,13 +29,13 @@ export async function modificarUsuario(id: number, correo: string, nombre: strin
     if (contrasenia && contrasenia.trim() !== "") {
         payload.contrasenia = contrasenia;
     }
-    return await axios.put(`${BASE_URL}/usuarios/${id}`, payload);
+    return await axios.put(`${API_URL}/usuarios/${id}`, payload);
 }
 
 export async function deshabilitarUsuario(id: number) {
-    return await axios.delete(`${BASE_URL}/usuarios/${id}`);
+    return await axios.delete(`${API_URL}/usuarios/${id}`);
 }
 
 export async function obtenerListaProyectosUsuario(idUsuario: number) {
-    return await axios.get<IProyectosListaResponse>(`${BASE_URL}/usuarios/proyectos/${idUsuario}`);
+    return await axios.get<IProyectosListaResponse>(`${API_URL}/usuarios/proyectos/${idUsuario}`);
 }
