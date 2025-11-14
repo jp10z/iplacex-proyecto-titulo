@@ -74,7 +74,7 @@ def agregar_usuario():
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.USUARIO_AGREGAR,
-        None,
+        g.id_usuario,
         None,
         f"Usuario agregado: {nombre}",
         {
@@ -124,7 +124,7 @@ def modificar_usuario(id_usuario: int):
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.USUARIO_MODIFICAR,
-        None,
+        g.id_usuario,
         None,
         f"Usuario modificado: {nombre}",
         {
@@ -160,7 +160,7 @@ def deshabilitar_usuario(id_usuario: int):
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.USUARIO_DESHABILITAR,
-        None,
+        g.id_usuario,
         None,
         f"Usuario deshabilitado: {usuario[2]}",
         {

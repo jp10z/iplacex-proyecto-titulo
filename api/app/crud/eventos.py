@@ -78,7 +78,7 @@ def agregar_evento(bd_conexion: Connection, id_tipo_evento: int, id_usuario: int
     """
     query_vars = {
         "id_tipo_evento": id_tipo_evento,
-        "id_usuario": 1, # id usuario en duro por ahora
+        "id_usuario": id_usuario,
         "id_servidor": id_servidor,
         "detalle": detalle,
         "datos": json.dumps(datos) if datos else None

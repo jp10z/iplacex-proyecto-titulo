@@ -59,7 +59,7 @@ def obtener_usuario_por_correo(bd_conexion: Connection, correo: str):
 def obtener_datos_login_por_correo(bd_conexion: Connection, correo: str):
     cursor = bd_conexion.cursor()
     query = """
-        SELECT id_usuario, contrasenia
+        SELECT id_usuario, password
         FROM usuario
         WHERE correo = :correo
         AND id_estado = :id_estado
@@ -110,15 +110,15 @@ def obtener_usuario_por_id(bd_conexion: Connection, id_usuario: int):
 def agregar_usuario(bd_conexion: Connection, correo: str, nombre: str, hash_contrasenia: str, id_rol: int):
     cursor = bd_conexion.cursor()
     query = """
-        INSERT INTO usuario (correo, nombre, contrasenia, id_rol, id_estado)
-        VALUES (:correo, :nombre, :contrasenia, :id_rol, :id_estado)
+        INSERT INTO usuario (correo, nombre, password, id_rol, id_estado)
+        VALUES (:correo, :nombre, :password, :id_rol, :id_estado)
         RETURNING id_usuario INTO :id_usuario
     """
     id_usuario = cursor.var(NUMBER)
     query_vars = {
         "correo": correo,
         "nombre": nombre,
-        "contrasenia": hash_contrasenia,
+        "password": hash_contrasenia,
         "id_rol": id_rol,
         "id_estado": ESTADOS.ACTIVO,
         "id_usuario": id_usuario
@@ -132,14 +132,14 @@ def modificar_usuario(bd_conexion: Connection, id_usuario: int, correo: str, nom
     if contrasenia:
         query = """
             UPDATE usuario
-            SET correo = :correo, nombre = :nombre, id_rol = :id_rol, contrasenia = :contrasenia, fecha_actualizacion = :fecha_actualizacion
+            SET correo = :correo, nombre = :nombre, id_rol = :id_rol, password = :password, fecha_actualizacion = :fecha_actualizacion
             WHERE id_usuario = :id_usuario
         """
         query_vars = {
             "correo": correo,
             "nombre": nombre,
             "id_rol": id_rol,
-            "contrasenia": contrasenia,
+            "password": contrasenia,
             "fecha_actualizacion": datetime.now(),
             "id_usuario": id_usuario,
         }

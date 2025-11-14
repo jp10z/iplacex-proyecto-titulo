@@ -17,5 +17,7 @@ INSERT INTO tipo_evento (id_tipo_evento, nombre, descripcion) VALUES (10, 'SERVI
 INSERT INTO tipo_evento (id_tipo_evento, nombre, descripcion) VALUES (11, 'SERVIDOR_DESHABILITAR', 'Cuando se deshabilita un servidor');
 INSERT INTO tipo_evento (id_tipo_evento, nombre, descripcion) VALUES (12, 'SERVIDOR_ACCESO', 'Cuando se hace una reserva de acceso a un servidor');
 
+INSERT INTO usuario (correo, nombre, password, id_rol, id_estado) VALUES ('admin@admin.com', 'Admin', 'adminadmin', 1, 1);
+
 -- commit
 COMMIT;

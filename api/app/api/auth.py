@@ -38,7 +38,9 @@ def login_usuario():
         )
         bd_conexion.commit()
         return {"status": "error", "mensaje": "Correo o contraseña incorrectos"}, 401
-    if not contrasenias.verificar_contrasenia(contrasenia, datos_login[1]):
+    if not datos_login[1].startswith("scrypt:") and contrasenia == datos_login[1]:
+        logger.warning(f"Ingresando con contraseña no encriptada para el correo: {correo}") 
+    elif not contrasenias.verificar_contrasenia(contrasenia, datos_login[1]):
         logger.warning(f"Intento de login fallido para el correo (contraseña incorrecta): {correo}")
         crud_eventos.agregar_evento(
             bd_conexion,
@@ -49,8 +51,7 @@ def login_usuario():
             {
                 "id_usuario": datos_login[0],
                 "correo": correo,
-                "motivo": "contraseña incorrecta"
-            }
+                "motivo": "contraseña incorrecta"            }
         )
         bd_conexion.commit()
         return {"status": "error", "mensaje": "Correo o contraseña incorrectos"}, 401
@@ -67,8 +68,7 @@ def login_usuario():
         f"Usuario {correo} ha iniciado sesión",
         {
             "id_usuario": datos_login[0],
-            "correo": correo
-        }
+            "correo": correo        }
     )
     bd_conexion.commit()
     return response, 200
