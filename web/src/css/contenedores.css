@@ -49,4 +49,5 @@
     padding: 8px;
     border: solid #ced4da 1px;
     border-radius: 5px;
+    overflow-y: hidden;
 }

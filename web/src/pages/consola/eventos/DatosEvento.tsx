@@ -68,34 +68,36 @@ export function DatosEventoModal({ modalAbierto, cerrarModal, evento }: Props) {
     >
         <OverlayCarga cargando={cargando}>
             <div>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td><strong>ID Evento:</strong></td>
-                            <td>{cargando ? "Cargando..." : idEvento}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Evento:</strong></td>
-                            <td>{cargando ? "Cargando..." : EVENTOS[nombreTipoEvento as keyof typeof EVENTOS]}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Detalle:</strong></td>
-                            <td>{cargando ? "Cargando..." : detalle}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Fecha y hora:</strong></td>
-                            <td>{cargando ? "Cargando..." : fechaCreacion}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Usuario:</strong></td>
-                            <td>{cargando ? "Cargando..." : nombreUsuario}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Servidor:</strong></td>
-                            <td>{cargando ? "Cargando..." : nombreServidor || "(Ninguno)"}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div className="tabla-contenedor">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td><strong>ID Evento:</strong></td>
+                                <td>{cargando ? "Cargando..." : idEvento}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Evento:</strong></td>
+                                <td>{cargando ? "Cargando..." : EVENTOS[nombreTipoEvento as keyof typeof EVENTOS]}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Detalle:</strong></td>
+                                <td>{cargando ? "Cargando..." : detalle}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fecha y hora:</strong></td>
+                                <td>{cargando ? "Cargando..." : fechaCreacion}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Usuario:</strong></td>
+                                <td>{cargando ? "Cargando..." : nombreUsuario}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Servidor:</strong></td>
+                                <td>{cargando ? "Cargando..." : nombreServidor || "(Ninguno)"}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <div style={{ marginTop: "8px" }}>
                     <pre className="json">{datos ? JSON.stringify(datos, null, 2) : "Cargando..."}</pre>
                 </div>

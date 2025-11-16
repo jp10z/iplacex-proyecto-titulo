@@ -2,7 +2,7 @@
 
 ## Archivos
 
-0-drop-esquemas.sql: Este archivo contiene las sentencias para eliminar (drop) todas las tablas relacionadas al proyecto.
+0-drop-tablas.sql: Este archivo contiene las sentencias para eliminar (drop) todas las tablas relacionadas al proyecto.
 
 1-creacion-tablas.sql: Este archivo contiene las sentencias para crear todas las tablas y relaciones del proyecto.
 
@@ -18,4 +18,4 @@ El script 3-seed.datos.sql también creará un usuario administrador que podrá 
 
 El correo del usuario Admin predeterminado es "admin@admin.com" y la contraseña es "adminadmin" sin comillas.
 
-El script 0-drop-esquemas.sql sólo está incluído para efectos de pruebas, para eliminar todo y proceder luego con los scripts del 1 al 3, no se debe ejecutar a menos que sea en ambiente de prueba.
+El script 0-drop-tablas.sql sólo está incluído para efectos de pruebas, para eliminar todo y proceder luego con los scripts del 1 al 3, no se debe ejecutar a menos que sea en ambiente de prueba.
