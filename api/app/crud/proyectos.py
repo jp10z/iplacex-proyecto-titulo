@@ -120,6 +120,20 @@ def actualizar_estado_proyecto(bd_conexion: Connection, id_proyecto: int, id_est
         "id_proyecto": id_proyecto
     }
     cursor.execute(query, query_vars)
+    # deshabilitar también los servidores asociados al proyecto
+    query_servidores = """
+        UPDATE servidor
+        SET id_estado = :id_estado_inactivo, fecha_actualizacion = :fecha_actualizacion
+        WHERE id_proyecto = :id_proyecto
+        AND id_estado = :id_estado_activo
+    """
+    query_vars_servidores = {
+        "id_estado_inactivo": ESTADOS.INACTIVO,
+        "fecha_actualizacion": datetime.now(),
+        "id_proyecto": id_proyecto,
+        "id_estado_activo": ESTADOS.ACTIVO
+    }
+    cursor.execute(query_servidores, query_vars_servidores)
     cursor.close()
 
 def obtener_lista_proyectos(bd_conexion: Connection):

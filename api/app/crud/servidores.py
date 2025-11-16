@@ -40,6 +40,25 @@ def obtener_servidores_con_paginacion(bd_conexion: Connection, pagina_index: int
     cursor.close()
     return resultado_items, resultado_total
 
+def obtener_servidores_por_id_proyecto(bd_conexion: Connection, id_proyecto: int):
+    cursor = bd_conexion.cursor()
+    query = """
+        SELECT s.id_servidor, s.nombre, s.descripcion, p.id_proyecto AS id_proyecto, p.nombre AS nombre_proyecto
+        FROM servidor s
+        LEFT JOIN proyecto p
+            ON p.id_proyecto = s.id_proyecto
+        WHERE s.id_proyecto = :id_proyecto
+        AND s.id_estado = :id_estado
+    """
+    query_vars = {
+        "id_proyecto": id_proyecto,
+        "id_estado": ESTADOS.ACTIVO
+    }
+    cursor.execute(query, query_vars)
+    resultado_items = cursor.fetchall()
+    cursor.close()
+    return resultado_items
+
 def obtener_servidor_por_nombre(bd_conexion: Connection, nombre: str):
     cursor = bd_conexion.cursor()
     query = """

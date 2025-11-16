@@ -39,7 +39,7 @@ export function DeshabilitarProyectoModal({ modalAbierto, cerrarModal, proyecto 
         deshabilitarCerrar={cargando}
     >
         <OverlayCarga cargando={cargando}>
-            <p>¿Estás seguro de que deseas deshabilitar el siguiente proyecto?</p>
+            <p>¿Estás seguro de que deseas deshabilitar el siguiente proyecto?, también se deshabilitarán todos los servidores asociados a este.</p>
             {proyecto && (
                 <div style={{ marginTop: "12px" }}>
                     <p><strong>Nombre:</strong> {proyecto.nombre}</p>

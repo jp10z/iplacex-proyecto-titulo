@@ -3,6 +3,7 @@ from flask import Blueprint, g, request
 from oracledb import Connection
 from app.maestros import ESTADOS, TIPOS_EVENTO, ROLES
 from app.crud import proyectos as crud_proyectos
+from app.crud import servidores as crud_servidores
 from app.crud import eventos as crud_eventos
 from app import sesion
 
@@ -116,6 +117,17 @@ def deshabilitar_proyecto(id_proyecto: int):
     # obtener conexión a la BD
     bd_conexion: Connection = g.bd_conexion
     proyecto = crud_proyectos.obtener_proyecto_por_id(bd_conexion, id_proyecto)
+    if proyecto is None:
+        return {"status": "error", "mensaje": "El proyecto no existe"}, 404
+    # obtener servidores asociados al proyecto
+    servidores_asociados = crud_servidores.obtener_servidores_por_id_proyecto(bd_conexion, id_proyecto)
+    servidores_dict = []
+    for servidor in servidores_asociados:
+        servidores_dict.append({
+            "id_servidor": servidor[0],
+            "nombre": servidor[1],
+            "descripcion": servidor[2]
+        })
     # actualizar estado del proyecto
     crud_proyectos.actualizar_estado_proyecto(bd_conexion, id_proyecto, ESTADOS.INACTIVO)
     crud_eventos.agregar_evento(
@@ -127,7 +139,8 @@ def deshabilitar_proyecto(id_proyecto: int):
         {
             "id_proyecto": id_proyecto,
             "nombre": proyecto[1],
-            "descripcion": proyecto[2]
+            "descripcion": proyecto[2],
+            "servidores_asociados": servidores_dict
         }
     )
     bd_conexion.commit()
