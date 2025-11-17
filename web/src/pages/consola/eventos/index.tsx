@@ -8,9 +8,13 @@ import { toast } from "@/common/toast";
 import { EVENTOS } from "@/common/eventos";
 
 const obtenerFechaInicial = () => {
-    const date = new Date();
-    const isoDateString = date.toISOString(); 
-    return isoDateString.substring(0, 10); 
+    const fecha = new Date();
+    const anio = fecha.getFullYear();
+    const mes = fecha.getMonth() + 1; 
+    const dia = fecha.getDate();
+    const mesFormateado = mes < 10 ? `0${mes}` : mes;
+    const diaFormateado = dia < 10 ? `0${dia}` : dia;
+    return `${anio}-${mesFormateado}-${diaFormateado}`;
 };
 
 export function EventosPage() {
