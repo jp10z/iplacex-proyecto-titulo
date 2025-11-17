@@ -87,6 +87,10 @@ def modificar_proyecto(id_proyecto: int):
     proyecto_existente = crud_proyectos.obtener_proyecto_por_nombre(bd_conexion, nombre)
     if proyecto_existente is not None and proyecto_existente[0] != id_proyecto:
         return {"status": "error", "mensaje": "El nombre ya está en uso por otro proyecto"}, 422
+    # datos del proyecto a modificar
+    proyecto_existente = crud_proyectos.obtener_proyecto_por_id(bd_conexion, id_proyecto)
+    if proyecto_existente is None:
+        return {"status": "error", "mensaje": "El proyecto no existe"}, 422
     # actualizar proyecto en la BD
     crud_proyectos.modificar_proyecto(bd_conexion, id_proyecto, nombre, descripcion)
     crud_eventos.agregar_evento(

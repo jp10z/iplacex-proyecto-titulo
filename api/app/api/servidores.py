@@ -99,6 +99,10 @@ def modificar_servidor(id_servidor: int):
     servidor_existente = crud_servidores.obtener_servidor_por_nombre(bd_conexion, nombre)
     if servidor_existente is not None and servidor_existente[0] != id_servidor:
         return {"status": "error", "mensaje": "El nombre ya está en uso por otro servidor"}, 422
+    # datos del servidor a modificar
+    servidor_existente = crud_servidores.obtener_servidor_por_id(bd_conexion, id_servidor)
+    if servidor_existente is None:
+        return {"status": "error", "mensaje": "El servidor no existe"}, 422
     # proyecto
     proyecto = crud_proyectos.obtener_proyecto_por_id(bd_conexion, id_proyecto)
     if proyecto is None:

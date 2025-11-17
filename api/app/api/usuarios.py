@@ -117,6 +117,10 @@ def modificar_usuario(id_usuario: int):
     proyectos_previos = crud_usuarios.obtener_lista_proyectos_usuario(bd_conexion, id_usuario)
     if usuario_existente is not None and usuario_existente[0] != id_usuario:
         return {"status": "error", "mensaje": "El correo ya está en uso"}, 422
+    # datos del usuario a modificar
+    usuario_existente = crud_usuarios.obtener_usuario_por_id(bd_conexion, id_usuario)
+    if usuario_existente is None:
+        return {"status": "error", "mensaje": "El usuario no existe"}, 422
     # actualizar usuario en la BD
     crud_usuarios.modificar_usuario(bd_conexion, id_usuario, correo, nombre, id_rol, hash_contrasenia)
     crud_usuarios.setear_proyectos_usuario(bd_conexion, id_usuario, proyectos)
