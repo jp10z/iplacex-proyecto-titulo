@@ -8,6 +8,8 @@ import { DetallesAccesoModal } from "./DetallesAcceso";
 import { OverlayCarga } from "@/components/overlay-carga";
 import { toast } from "@/common/toast";
 
+const CARGA_INTERVALO_SEGUNDOS = 3;
+
 export function DashboardPage() {
     const [cargandoProyectos, setCargandoProyectos] = useState(true);
     const [cargandoServidores, setCargandoServidores] = useState(false);
@@ -124,8 +126,8 @@ export function DashboardPage() {
         const fetchData = () => cargarServidores(proyectoSeleccionadoId);
         // ejecutar inmediatamente la primera vez
         fetchData();
-        // configurar para que se ejecute cada 20 segundos
-        const id = setInterval(fetchData, 6000) as unknown as number;
+        // configurar para que se ejecute cada X segundos
+        const id = setInterval(fetchData, CARGA_INTERVALO_SEGUNDOS * 1000) as unknown as number;
         intervaloRef.current = id;
         // limpieza al salir o cambiar de proyecto
         return () => {

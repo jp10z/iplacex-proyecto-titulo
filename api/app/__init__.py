@@ -16,7 +16,14 @@ configurar_logger()
 
 # inicializar flask
 app = Flask(__name__)
-app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", utils.generar_texto_aleatorio(32))
+# secret key
+secret_key = os.getenv("JWT_SECRET_KEY")
+if not secret_key:
+    secret_key = utils.generar_texto_aleatorio(32)
+    logger.info("JWT_SECRET_KEY no está configurada, se generó una clave aleatoria")
+else:
+    logger.info("JWT_SECRET_KEY cargada desde variable de entorno")
+app.config["JWT_SECRET_KEY"] = secret_key
 app.config["CORS_HEADERS"] = "Content-Type"
 web_url = os.getenv("WEB_URL")
 logger.debug(f"WEB_URL: {web_url}")
