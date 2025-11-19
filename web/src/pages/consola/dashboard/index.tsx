@@ -186,7 +186,7 @@ export function DashboardPage() {
             {!cargandoProyectos && !proyectoSeleccionadoId && (
                 <div style={{ marginTop: "8px"}}>
                     <div className="tabla-contenedor">
-                        <OverlayCarga cargando={true} texto="Seleccione un proyecto">&nbsp;</OverlayCarga>
+                        <p style={{textAlign: "center", marginTop: "46px"}}>Seleccione un proyecto</p>
                     </div>
                 </div>
             )}

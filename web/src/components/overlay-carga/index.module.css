@@ -1,9 +1,10 @@
 .overlayCarga {
     position: relative;
+    min-height: 110px;
 }
 
 .overlayCargaMensaje {
-position: absolute;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -13,4 +14,8 @@ position: absolute;
     align-items: center;
     justify-content: center;
     z-index: 600;
+}
+
+.overlayCargaMensaje p {
+    margin-left: 8px;
 }

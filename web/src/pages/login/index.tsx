@@ -14,7 +14,11 @@ export function LoginPage() {
     const navigate = useNavigate();
 
     if (fetchingDatosSesion) {
-        return <div>Validando sesión...</div>;
+        return (
+            <div style={{marginTop: "40px"}}>
+                <OverlayCarga cargando={true} texto="Validando sesión...">&nbsp;</OverlayCarga>
+            </div>
+        );
     }
 
     if (autenticado) {

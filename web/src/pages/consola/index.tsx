@@ -9,6 +9,7 @@ import { Navbar, type Link } from "@/components/navbar";
 import { useSesion } from "@/context/SesionContext";
 import { logout } from "@/api/auth";
 import { useState } from "react";
+import { OverlayCarga } from "@/components/overlay-carga";
 
 export function ConsolaPage() {
     const { datosSesion, autenticado, fetchingDatosSesion, clearSesion } = useSesion();
@@ -16,7 +17,11 @@ export function ConsolaPage() {
     const navigate = useNavigate();
 
     if (fetchingDatosSesion) {
-        return <div>Validando sesión...</div>;
+        return (
+            <div style={{marginTop: "150px"}}>
+                <OverlayCarga cargando={true} texto="Validando sesión...">&nbsp;</OverlayCarga>
+            </div>
+        );
     }
 
     if (!autenticado || !datosSesion) {
@@ -34,7 +39,11 @@ export function ConsolaPage() {
     }
 
     if (realizandoLogout) {
-        return <div>Cerrando sesión...</div>;
+        return (
+            <div style={{marginTop: "40px"}}>
+                <OverlayCarga cargando={true} texto="Cerrando sesión...">&nbsp;</OverlayCarga>
+            </div>
+        );
     }
 
     const rutas: Link[] = [

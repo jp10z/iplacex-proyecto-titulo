@@ -1,4 +1,5 @@
-import classes from './index.module.css';
+import classes from "./index.module.css";
+import { Icono } from "@/components/icono";
 
 type Props = {
     texto?: string;
@@ -11,6 +12,7 @@ export function OverlayCarga({ cargando, texto = "Cargando...", children }: Prop
         <div className={classes.overlayCarga}>
             {cargando && (
                 <div className={classes.overlayCargaMensaje}>
+                    <Icono icono="cargando" tamano={24} />
                     <p>{texto}</p>
                 </div>
             )}
