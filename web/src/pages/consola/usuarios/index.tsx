@@ -73,49 +73,49 @@ export function UsuariosPage() {
                 />
             </div>
             <div style={{ marginTop: "8px"}}>
-                <div className="tabla-contenedor">
-                            <OverlayCarga cargando={cargando}>
-                    <table className="tabla-datos">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Correo</th>
-                                <th>Rol</th>
-                                <th style={{ width: "168px" }}>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                                {usuarios.items.length > 0 && usuarios.items.map((usuario) => (
-                                    <tr key={usuario.id}>
-                                        <td>{usuario.nombre}</td>
-                                        <td>{usuario.correo}</td>
-                                        <td>{obtenerRolTexto(usuario.rol)}</td>
-                                        <td>
-                                            <button onClick={() => {
-                                                setUsuarioSeleccionado(usuario);
-                                                setModalModificarUsuarioAbierto(true);
-                                            }}>Modificar</button>
-                                            <button onClick={() => {
-                                                setUsuarioSeleccionado(usuario);
-                                                setModalDeshabilitarUsuarioAbierto(true);
-                                            }}>Deshabilitar</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {!cargando && usuarios.items.length === 0 && (
-                                    <tr>
-                                        <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>No se encontraron usuarios.</td>
-                                    </tr>
-                                )}
-                                {cargando && usuarios.items.length === 0 && (
-                                    <tr>
-                                        <td colSpan={4} style={{ height: "50px" }}></td>
-                                    </tr>
-                                )}
-                            </tbody>
-                    </table>
-                            </OverlayCarga>
-                </div>
+                <OverlayCarga cargando={cargando}>
+                    <div className="tabla-contenedor">
+                        <table className="tabla-datos">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Rol</th>
+                                    <th style={{ width: "168px" }}>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    {usuarios.items.length > 0 && usuarios.items.map((usuario) => (
+                                        <tr key={usuario.id}>
+                                            <td>{usuario.nombre}</td>
+                                            <td>{usuario.correo}</td>
+                                            <td>{obtenerRolTexto(usuario.rol)}</td>
+                                            <td>
+                                                <button onClick={() => {
+                                                    setUsuarioSeleccionado(usuario);
+                                                    setModalModificarUsuarioAbierto(true);
+                                                }}>Modificar</button>
+                                                <button onClick={() => {
+                                                    setUsuarioSeleccionado(usuario);
+                                                    setModalDeshabilitarUsuarioAbierto(true);
+                                                }}>Deshabilitar</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {!cargando && usuarios.items.length === 0 && (
+                                        <tr>
+                                            <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>No se encontraron usuarios.</td>
+                                        </tr>
+                                    )}
+                                    {cargando && usuarios.items.length === 0 && (
+                                        <tr>
+                                            <td colSpan={4} style={{ height: "50px" }}></td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                        </table>
+                    </div>
+                </OverlayCarga>
             </div>
             <PaginacionFooter
                 paginacionActual={paginacion.index}

@@ -95,49 +95,49 @@ export function ServidoresPage() {
                 />
             </div>
             <div style={{ marginTop: "8px"}}>
-                <div className="tabla-contenedor">
-                            <OverlayCarga cargando={cargando}>
-                    <table className="tabla-datos">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Descripción</th>
-                                <th>Proyecto</th>
-                                <th style={{ width: "166px" }}>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                                {servidores.items.length > 0 && servidores.items.map((servidor) => (
-                                    <tr key={servidor.id}>
-                                        <td>{servidor.nombre}</td>
-                                        <td>{servidor.descripcion}</td>
-                                        <td>{servidor.nombre_proyecto}</td>
-                                        <td>
-                                            <button onClick={() => {
-                                                setServidorSeleccionado(servidor);
-                                                setModalModificarServidorAbierto(true);
-                                            }}>Modificar</button>
-                                            <button onClick={() => {
-                                                setServidorSeleccionado(servidor);
-                                                setModalDeshabilitarServidorAbierto(true);
-                                            }}>Deshabilitar</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {!cargando && servidores.items.length === 0 && (
-                                    <tr>
-                                        <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>No se encontraron servidores.</td>
-                                    </tr>
-                                )}
-                                {cargando && servidores.items.length === 0 && (
-                                    <tr>
-                                        <td colSpan={4} style={{ height: "50px" }}></td>
-                                    </tr>
-                                )}
-                            </tbody>
-                    </table>
-                            </OverlayCarga>
-                </div>
+                <OverlayCarga cargando={cargando}>
+                    <div className="tabla-contenedor">
+                        <table className="tabla-datos">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Proyecto</th>
+                                    <th style={{ width: "166px" }}>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    {servidores.items.length > 0 && servidores.items.map((servidor) => (
+                                        <tr key={servidor.id}>
+                                            <td>{servidor.nombre}</td>
+                                            <td>{servidor.descripcion}</td>
+                                            <td>{servidor.nombre_proyecto}</td>
+                                            <td>
+                                                <button onClick={() => {
+                                                    setServidorSeleccionado(servidor);
+                                                    setModalModificarServidorAbierto(true);
+                                                }}>Modificar</button>
+                                                <button onClick={() => {
+                                                    setServidorSeleccionado(servidor);
+                                                    setModalDeshabilitarServidorAbierto(true);
+                                                }}>Deshabilitar</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {!cargando && servidores.items.length === 0 && (
+                                        <tr>
+                                            <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>No se encontraron servidores.</td>
+                                        </tr>
+                                    )}
+                                    {cargando && servidores.items.length === 0 && (
+                                        <tr>
+                                            <td colSpan={4} style={{ height: "50px" }}></td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                        </table>
+                    </div>
+                </OverlayCarga>
             </div>
             <PaginacionFooter
                 paginacionActual={paginacion.index}

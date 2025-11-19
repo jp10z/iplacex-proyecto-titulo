@@ -74,49 +74,49 @@ export function EventosPage() {
                 />
             </div>
             <div style={{ marginTop: "8px"}}>
-                <div className="tabla-contenedor">
-                            <OverlayCarga cargando={cargando}>
-                    <table className="tabla-datos">
-                        <thead>
-                            <tr>
-                                <th>Evento</th>
-                                <th>Fecha y hora</th>
-                                <th>Detalle</th>
-                                <th>Usuario</th>
-                                <th>Servidor</th>
-                                <th style={{ width: "80px" }}>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {eventos.items.length > 0 && eventos.items.map((evento) => (
-                                <tr key={evento.id}>
-                                    <td>{ EVENTOS[evento.nombre_tipo_evento as keyof typeof EVENTOS] }</td>
-                                    <td>{evento.fecha_creacion}</td>
-                                    <td>{evento.detalle}</td>
-                                    <td>{evento.nombre_usuario}</td>
-                                    <td>{evento.nombre_servidor}</td>
-                                    <td>
-                                        <button onClick={() => {
-                                            setEventoSeleccionado(evento);
-                                            setModalDatosEventoAbierto(true);
-                                        }}>Ver datos</button>
-                                    </td>
-                                </tr>
-                            ))}
-                            {!cargando && eventos.items.length === 0 && (
+                <OverlayCarga cargando={cargando}>
+                    <div className="tabla-contenedor">
+                        <table className="tabla-datos">
+                            <thead>
                                 <tr>
-                                    <td colSpan={6} style={{ textAlign: "center", height: "50px" }}>No se encontraron eventos.</td>
+                                    <th>Evento</th>
+                                    <th>Fecha y hora</th>
+                                    <th>Detalle</th>
+                                    <th>Usuario</th>
+                                    <th>Servidor</th>
+                                    <th style={{ width: "80px" }}>Acciones</th>
                                 </tr>
-                            )}
-                            {cargando && eventos.items.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} style={{ height: "50px" }}></td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                            </OverlayCarga>
-                </div>
+                            </thead>
+                            <tbody>
+                                {eventos.items.length > 0 && eventos.items.map((evento) => (
+                                    <tr key={evento.id}>
+                                        <td>{ EVENTOS[evento.nombre_tipo_evento as keyof typeof EVENTOS] }</td>
+                                        <td>{evento.fecha_creacion}</td>
+                                        <td>{evento.detalle}</td>
+                                        <td>{evento.nombre_usuario}</td>
+                                        <td>{evento.nombre_servidor}</td>
+                                        <td>
+                                            <button onClick={() => {
+                                                setEventoSeleccionado(evento);
+                                                setModalDatosEventoAbierto(true);
+                                            }}>Ver datos</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {!cargando && eventos.items.length === 0 && (
+                                    <tr>
+                                        <td colSpan={6} style={{ textAlign: "center", height: "50px" }}>No se encontraron eventos.</td>
+                                    </tr>
+                                )}
+                                {cargando && eventos.items.length === 0 && (
+                                    <tr>
+                                        <td colSpan={6} style={{ height: "50px" }}></td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </OverlayCarga>
             </div>
             <PaginacionFooter
                 paginacionActual={paginacion.index}

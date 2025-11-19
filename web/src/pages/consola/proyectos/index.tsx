@@ -58,49 +58,49 @@ export function ProyectosPage() {
                 />
             </div>
             <div style={{ marginTop: "8px"}}>
-                <div className="tabla-contenedor">
-                            <OverlayCarga cargando={cargando}>
-                    <table className="tabla-datos">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Descripción</th>
-                                <th>Servidores</th>
-                                <th style={{ width: "166px" }}>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                                {proyectos.items.length > 0 && proyectos.items.map((proyecto) => (
-                                    <tr key={proyecto.id}>
-                                        <td>{proyecto.nombre}</td>
-                                        <td>{proyecto.descripcion}</td>
-                                        <td>{proyecto.servidores}</td>
-                                        <td>
-                                            <button onClick={() => {
-                                                setProyectoSeleccionado(proyecto);
-                                                setModalModificarProyectoAbierto(true);
-                                            }}>Modificar</button>
-                                            <button onClick={() => {
-                                                setProyectoSeleccionado(proyecto);
-                                                setModalDeshabilitarProyectoAbierto(true);
-                                            }}>Deshabilitar</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {!cargando && proyectos.items.length === 0 && (
-                                    <tr>
-                                        <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>No se encontraron proyectos.</td>
-                                    </tr>
-                                )}
-                                {cargando && proyectos.items.length === 0 && (
-                                    <tr>
-                                        <td colSpan={4} style={{ height: "50px" }}></td>
-                                    </tr>
-                                )}
-                            </tbody>
-                    </table>
-                            </OverlayCarga>
-                </div>
+                <OverlayCarga cargando={cargando}>
+                    <div className="tabla-contenedor">
+                        <table className="tabla-datos">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Servidores</th>
+                                    <th style={{ width: "166px" }}>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    {proyectos.items.length > 0 && proyectos.items.map((proyecto) => (
+                                        <tr key={proyecto.id}>
+                                            <td>{proyecto.nombre}</td>
+                                            <td>{proyecto.descripcion}</td>
+                                            <td>{proyecto.servidores}</td>
+                                            <td>
+                                                <button onClick={() => {
+                                                    setProyectoSeleccionado(proyecto);
+                                                    setModalModificarProyectoAbierto(true);
+                                                }}>Modificar</button>
+                                                <button onClick={() => {
+                                                    setProyectoSeleccionado(proyecto);
+                                                    setModalDeshabilitarProyectoAbierto(true);
+                                                }}>Deshabilitar</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {!cargando && proyectos.items.length === 0 && (
+                                        <tr>
+                                            <td colSpan={4} style={{ textAlign: "center", height: "50px" }}>No se encontraron proyectos.</td>
+                                        </tr>
+                                    )}
+                                    {cargando && proyectos.items.length === 0 && (
+                                        <tr>
+                                            <td colSpan={4} style={{ height: "50px" }}></td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                        </table>
+                    </div>
+                </OverlayCarga>
             </div>
             <PaginacionFooter
                 paginacionActual={paginacion.index}

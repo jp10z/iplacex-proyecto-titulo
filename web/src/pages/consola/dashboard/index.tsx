@@ -192,8 +192,8 @@ export function DashboardPage() {
             )}
             {!cargandoProyectos && proyectoSeleccionadoId && (
             <div style={{ marginTop: "8px"}}>
-                <div className="tabla-contenedor">
-                    <OverlayCarga cargando={cargandoServidores && primeraCargaServidores}>
+                <OverlayCarga cargando={cargandoServidores && primeraCargaServidores}>
+                    <div className="tabla-contenedor">
                         <table className="tabla-datos">
                             <thead>
                                 <tr>
@@ -253,8 +253,8 @@ export function DashboardPage() {
                                     )}
                                 </tbody>
                         </table>
-                    </OverlayCarga>
-                </div>
+                    </div>
+                </OverlayCarga>
             </div>
             )}
             <AgregarAccesoModal
