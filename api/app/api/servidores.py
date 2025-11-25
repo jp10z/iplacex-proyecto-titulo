@@ -141,8 +141,8 @@ def deshabilitar_servidor(id_servidor: int):
     # obtener conexión a la BD
     bd_conexion: Connection = g.bd_conexion
     # actualizar estado del servidor
-    crud_servidores.actualizar_estado_servidor(bd_conexion, id_servidor, ESTADOS.INACTIVO)
     servidor = crud_servidores.obtener_servidor_por_id(bd_conexion, id_servidor)
+    crud_servidores.actualizar_estado_servidor(bd_conexion, id_servidor, ESTADOS.INACTIVO)
     crud_eventos.agregar_evento(
         bd_conexion,
         TIPOS_EVENTO.SERVIDOR_DESHABILITAR,
