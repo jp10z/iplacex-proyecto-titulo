@@ -1,0 +1,43 @@
+README
+
+Esta carpeta se compone de 4 archivos, los archivos .sql son compatibles
+con el motor de Oracle DB:
+
+1 Script de creación: Este archivo es el que contiene todas las sentencias
+    necesarias para crear las tablas del proyecto, junto con todas sus
+    relaciones e indices necesarios para asegurar una buena velocidad
+    de lectura una vez que la Base de datos alcance un buen volumen de datos
+
+2 Script de carga de datos: Este archivo contiene sentencias de INSERTS
+    para insertar en las tablas ya creadas previamente datos con los que
+    la web/api pueden empezar a trabajar, estos son inserts de las tablas
+    maestras y del resto, además de un crear usuario base administrador.
+    Este usuario administrador se crea con el correo "admin@admin.com" y la
+    contraseña "adminadmin" que puede ser usado para acceder a la web.
+
+3 Modelo entidad relación: Este PDF fue generado y exportado con el
+    programa "Oracle SQL Developer".
+
+4 Readme: Este archivo.
+
+
+Explicación básica de la estructura: El sistema usa varias tablas para poder
+    operar, dentro de ellas hay 3 tablas maestras (estado, rol, tipo_evento)
+    que contienen datos fijos y el resto de tablas que son las que van
+    escribiendo datos, se destacan las tablas usuario, proyecto y servidor
+    cada usuario va asociada a uno a varios proyectos, al igual que los
+    servidores, esto sirve para que en el dashboard principal sólo se visualicen
+    los servidores del proyecto que el usuario tiene seleccionado y asignado.
+    Adicionalmente hay una tabla evento que almacena datos a nivel de auditoría
+    que puede ser consultado por la web. Además de la tabla servidor_acceso
+    que va almacenando el último acceso al servidor especifico asociado
+    mediante su ID.
+
+
+Sobre el usuario administrador creado: la contraseña de esteno está encriptada,
+    esto es porque la API valida si la contraseña está encriptada o no, y como
+    este usuario no posee dicha encriptación entonces hará la comparación
+    directamente, esto no pasa con los ususarios creados desde la web. Por
+    lo que es estrictamente recomendado crear un nuevo usuario administrador
+    desde la web usando el usuario base y una vez completado entonces dar de
+    baja el usuario base para que no se vuelva a usar jamás.
